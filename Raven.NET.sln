@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.PoC", "Raven.NET.PoC\Raven.NET.PoC.csproj", "{43BEB8C9-BE82-4A13-A31B-4C362F4F5C72}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Core", "Raven.NET.Core\Raven.NET.Core.csproj", "{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{43BEB8C9-BE82-4A13-A31B-4C362F4F5C72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43BEB8C9-BE82-4A13-A31B-4C362F4F5C72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43BEB8C9-BE82-4A13-A31B-4C362F4F5C72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
