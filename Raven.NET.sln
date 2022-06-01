@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.PoC", "Raven.NET.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Core", "Raven.NET.Core\Raven.NET.Core.csproj", "{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{4474B5EE-4C44-4897-B0E7-FFA965AD4839}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Console", "Demos\Demo.Console\Demo.Console.csproj", "{A1966F28-D7A4-458D-AD17-5AD8FD1B6704}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,12 @@ Global
 		{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12CD41CB-FA14-465F-9C29-62D1AF0CEC7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1966F28-D7A4-458D-AD17-5AD8FD1B6704}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1966F28-D7A4-458D-AD17-5AD8FD1B6704}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1966F28-D7A4-458D-AD17-5AD8FD1B6704}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1966F28-D7A4-458D-AD17-5AD8FD1B6704}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A1966F28-D7A4-458D-AD17-5AD8FD1B6704} = {4474B5EE-4C44-4897-B0E7-FFA965AD4839}
 	EndGlobalSection
 EndGlobal
