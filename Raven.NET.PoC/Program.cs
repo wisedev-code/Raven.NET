@@ -1,8 +1,14 @@
 ﻿
+using Raven.NET.Core.Subjects;
 using Raven.NET.PoC.Observer;
 using Raven.NET.PoC.Subject;
 
 Console.WriteLine("Hello, World!");
+
+RavenTestSubject ravenTest = new RavenTestSubject();
+
+ravenTest.State = 12;
+ravenTest.TryNotify();
 
 var subject = new Subject();
 var observerA = new Observer();
