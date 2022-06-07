@@ -16,6 +16,5 @@ namespace Raven.NET.Core.Providers
 
         public Dictionary<string, RavenSettings> GetRavens()
             => _ravenMonitor.CurrentValue;
-
     }
 }
