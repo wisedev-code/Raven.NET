@@ -7,6 +7,7 @@ namespace Raven.NET.Core.Subjects
     public class RavenSubject
     {
         internal List<IRaven> Observers = new();
+        
         public RavenSubject()
         {
             var clone = this.MemberwiseClone();
