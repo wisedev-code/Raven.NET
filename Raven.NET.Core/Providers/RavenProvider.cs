@@ -9,13 +9,20 @@ namespace Raven.NET.Core.Providers
     public class RavenProvider : IRavenProvider
     {
         /// <inheritdoc/>
-        public bool AddRaven(string ravenName, IRaven raven) => RavenStore.RavenWatcherStore.TryAdd(ravenName, raven);
+        public bool AddRaven(string ravenName, IRaven raven) => RavenCache.RavenWatcherCache.TryAdd(ravenName, raven);
 
         /// <inheritdoc/>
-        public bool RemoveRaven(string ravenName) => RavenStore.RavenWatcherStore.TryRemove(ravenName, out _);
+        public bool RemoveRaven(string ravenName) => RavenCache.RavenWatcherCache.TryRemove(ravenName, out _);
 
         /// <inheritdoc/>
-        public bool RavenExist(string ravenName) => RavenStore.RavenWatcherStore.ContainsKey(ravenName);
+        public IRaven GetRaven(string ravenName)
+        {
+            RavenCache.RavenWatcherCache.TryGetValue(ravenName, out var result);
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public bool RavenExist(string ravenName) => RavenCache.RavenWatcherCache.ContainsKey(ravenName);
 
         /// <inheritdoc/>
         public void UpdateRavens(RavenSubject subject)

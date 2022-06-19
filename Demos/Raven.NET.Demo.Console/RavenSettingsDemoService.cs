@@ -2,11 +2,11 @@ using Raven.NET.Core.Providers.Interfaces;
 
 namespace Raven.NET.Demo.Console;
 
-public class RavenDemoService
+public class RavenSettingsDemoService
 {
     private readonly IRavenSettingsProvider _settingsProvider;
 
-    public RavenDemoService(IRavenSettingsProvider settingsProvider)
+    public RavenSettingsDemoService(IRavenSettingsProvider settingsProvider)
     {
         _settingsProvider = settingsProvider;
     }
@@ -24,7 +24,7 @@ public class RavenDemoService
             foreach (var raven in ravenSettings)
             {
                 System.Console.WriteLine(
-                    $"Found config for: {raven.Key} with values: {raven.Value.Key1}, {raven.Value.Key2}");
+                    $"Found config for: {raven.Key} with values: {raven.Value.AutoDestroy}, {raven.Value.LogLevel}");
             }
 
         } while (System.Console.ReadLine() != "q");
