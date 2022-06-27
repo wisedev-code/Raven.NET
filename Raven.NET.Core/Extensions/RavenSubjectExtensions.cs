@@ -5,6 +5,13 @@ namespace Raven.NET.Core.Extensions
 {
     public static class RavenSubjectExtensions
     {
+        
+        /// <summary>
+        /// Create string based on object reflection to store current value in memory cache
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="propName"></param>
+        /// <returns></returns>
         public static string CreateCacheValue(this object obj, string propName = null)
         {
             var sb = new StringBuilder();
@@ -27,7 +34,6 @@ namespace Raven.NET.Core.Extensions
                     }
                     else
                         sb.AppendFormat("{0}{1}_{2}|", propName, prop.Name, prop.GetValue(obj, null));
-
                 }
             return sb.ToString();
         }

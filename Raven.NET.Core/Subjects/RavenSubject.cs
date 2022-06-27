@@ -8,6 +8,9 @@ using Raven.NET.Core.Static;
 
 namespace Raven.NET.Core.Subjects
 {
+    /// <summary>
+    /// Base class that provides all methods needed to handle base of observer pattern
+    /// </summary>
     public class RavenSubject
     {
         internal List<IRaven> Observers = new();
@@ -18,6 +21,20 @@ namespace Raven.NET.Core.Subjects
             UniqueId = Guid.NewGuid();
         }
 
+        internal void Attach(IRaven ravenWatcher)
+        {
+            var cacheKey = this.CreateCacheValue();
+            RavenCache.SubjectCache.TryAdd(UniqueId, this.CreateCacheValue());
+            Observers.Add(ravenWatcher);
+        }
+
+        internal void Detach(IRavenWatcher ravenWatcher)
+        {
+            Observers.Remove(ravenWatcher);
+            if (!Observers.Any())
+                RavenCache.SubjectCache.Remove(UniqueId, out var _);
+        }
+        
         public void TryNotify()
         {
             if (RavenCache.SubjectCache.ContainsKey(UniqueId))
@@ -28,20 +45,6 @@ namespace Raven.NET.Core.Subjects
                     Observers.ForEach(raven => raven.Update(this));
                 }
             }
-        }
-
-        public void Attach(IRaven ravenWatcher)
-        {
-            var cacheKey = this.CreateCacheValue();
-            RavenCache.SubjectCache.TryAdd(UniqueId, this.CreateCacheValue());
-            Observers.Add(ravenWatcher);
-        }
-
-        public void Detach(IRavenWatcher ravenWatcher)
-        {
-            Observers.Remove(ravenWatcher);
-            if (!Observers.Any()) ;
-                RavenCache.SubjectCache.Remove(UniqueId, out var _);
         }
     }
 }
