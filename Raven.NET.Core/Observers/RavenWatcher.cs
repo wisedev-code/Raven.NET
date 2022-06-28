@@ -9,6 +9,7 @@ using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Observers
 {
+    /// <inheritdoc/>
     public class RavenWatcher : IRavenWatcher
     {
         private readonly IRavenProvider _ravenProvider;
@@ -24,11 +25,13 @@ namespace Raven.NET.Core.Observers
             _ravenSettingsProvider = ravenSettingsProvider;
         }
         
+        /// <inheritdoc/>
         void IRaven.Update(RavenSubject subject)
         {
             updateAction(subject);
         }
 
+        /// <inheritdoc/>
         public IRavenWatcher Create(string name, Func<RavenSubject, bool> callback, Action<RavenSettings> options = null)
         {
             updateAction = callback;
@@ -48,6 +51,7 @@ namespace Raven.NET.Core.Observers
             return this;
         }
 
+        /// <inheritdoc/>
         public IRavenWatcher Watch(RavenSubject subject)
         {
             subject.Attach(this);
@@ -55,6 +59,7 @@ namespace Raven.NET.Core.Observers
             return this;
         }
 
+        /// <inheritdoc/>
         public void UnWatch(string name, RavenSubject subject)
         {
             var raven = _ravenProvider.GetRaven(name) as RavenWatcher;
@@ -64,6 +69,7 @@ namespace Raven.NET.Core.Observers
                 TryDestroy(raven, name);
         }
         
+        /// <inheritdoc/>
         public void Stop(string name)
         {
             var raven = _ravenProvider.GetRaven(name) as RavenWatcher;
@@ -73,11 +79,12 @@ namespace Raven.NET.Core.Observers
                 TryDestroy(raven, name);
         }
 
+        /// <inheritdoc/>
         private void TryDestroy(RavenWatcher ravenWatcher, string ravenName)
         {
             if (!ravenWatcher.watchedSubjects.Any())
             {
-                RavenCache.RavenWatcherCache.Remove(ravenName, out var _);
+                RavenCache.RavenWatcherCache.Remove(ravenName, out _);
             }
         }
     }
