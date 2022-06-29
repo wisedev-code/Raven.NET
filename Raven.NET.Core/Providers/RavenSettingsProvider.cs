@@ -16,5 +16,12 @@ namespace Raven.NET.Core.Providers
 
         public Dictionary<string, RavenSettings> GetRavens()
             => _ravenMonitor.CurrentValue;
+
+        public RavenSettings GetRaven(string name)
+        {
+            _ravenMonitor.CurrentValue.TryGetValue(name, out var ravenSettings);
+            return ravenSettings;
+        }
+            
     }
 }

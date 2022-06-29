@@ -1,9 +1,10 @@
+using Microsoft.Extensions.Logging;
+
 namespace Raven.NET.Core.Configuration
 {
-    // TODO - add some proper settings
     public class RavenSettings
     {
-        public string Key1 { get; set; }
-        public int Key2 { get; set; }
+        public bool AutoDestroy { get; set; }
+        public LogLevel LogLevel { get; set; }
     }
 }

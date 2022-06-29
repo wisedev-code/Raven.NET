@@ -1,28 +1,48 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Raven.NET.Core.Observers;
+using Raven.NET.Core.Extensions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Static;
 
 namespace Raven.NET.Core.Subjects
 {
+    /// <summary>
+    /// Base class that provides all methods needed to handle base of observer pattern
+    /// </summary>
     public class RavenSubject
     {
         internal List<IRaven> Observers = new();
-        
-        public RavenSubject()
+        private Guid UniqueId { get; set; }
+
+        protected RavenSubject()
         {
-            var clone = this.MemberwiseClone();
-            RavenStore.SubjectStore.TryAdd(GetHashCode(), clone);
+            UniqueId = Guid.NewGuid();
         }
 
+        internal void Attach(IRaven ravenWatcher)
+        {
+            var cacheKey = this.CreateCacheValue();
+            RavenCache.SubjectCache.TryAdd(UniqueId, this.CreateCacheValue());
+            Observers.Add(ravenWatcher);
+        }
+
+        internal void Detach(IRavenWatcher ravenWatcher)
+        {
+            Observers.Remove(ravenWatcher);
+            if (!Observers.Any())
+                RavenCache.SubjectCache.Remove(UniqueId, out var _);
+        }
+        
         public void TryNotify()
         {
-            var hashKey = GetHashCode();
-            if (RavenStore.SubjectStore.ContainsKey(hashKey))
+            if (RavenCache.SubjectCache.ContainsKey(UniqueId))
             {
-                if (!RavenStore.SubjectStore[hashKey].Equals(this))
+                if (RavenCache.SubjectCache[UniqueId] != this.CreateCacheValue())
                 {
-                    RavenStore.SubjectStore[hashKey] = this;
-                    //todo check list of observers and call update
+                    RavenCache.SubjectCache[UniqueId] = this.CreateCacheValue();
+                    Observers.ForEach(raven => raven.Update(this));
                 }
             }
         }
