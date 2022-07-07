@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Raven.NET.Core.Configuration;
 using Raven.NET.Core.Observers.Interfaces;
+using Raven.NET.Core.Providers.Interfaces;
 using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Observers
@@ -8,16 +10,37 @@ namespace Raven.NET.Core.Observers
     /// <inheritdoc/>
     public class RavenTypeWatcher : IRavenTypeWatcher
     {
+        private readonly IRavenProvider _ravenProvider;
+        private readonly IRavenSettingsProvider _ravenSettingsProvider;
+
+        private RavenSettings _ravenSettings = new();
+        private List<RavenSubject> _watchedSubjects = new List<RavenSubject>();
+        private Func<RavenSubject,bool> _updateAction;
+        
         /// <inheritdoc/>
         void IRaven.Update(RavenSubject subject)
         {
-            throw new NotImplementedException();
+            _updateAction.Invoke(subject);
         }
 
         /// <inheritdoc/>
-        public IRavenWatcher Create<T>(string name, string keyName, Func<RavenSubject, bool> callback, Action<RavenSettings> options = null)
+        public IRavenTypeWatcher Create<T>(string name, string keyName, Func<RavenSubject, bool> callback, Action<RavenSettings> options = null) 
         {
-            throw new NotImplementedException();
+            _updateAction = callback;
+            _ravenProvider.AddRaven(name,this);
+
+            var ravenSettings = _ravenSettingsProvider.GetRaven(name);
+            if (ravenSettings != null)
+            {
+                _ravenSettings = ravenSettings;
+            }
+
+            if (options != null)
+            {
+                options(_ravenSettings);
+            }
+            
+            return this;
         }
 
         /// <inheritdoc/>

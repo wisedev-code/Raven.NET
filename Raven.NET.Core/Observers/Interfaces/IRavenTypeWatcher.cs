@@ -19,7 +19,7 @@ namespace Raven.NET.Core.Observers.Interfaces
         /// <param name="options"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public IRavenWatcher Create<T>(string name, string keyName, Func<RavenSubject, bool> callback, Action<RavenSettings> options = null);
+        public IRavenTypeWatcher Create<T>(string name, string keyName, Func<RavenSubject, bool> callback, Action<RavenSettings> options = null);
 
         /// <summary>
         /// Ignore this subject from watching
