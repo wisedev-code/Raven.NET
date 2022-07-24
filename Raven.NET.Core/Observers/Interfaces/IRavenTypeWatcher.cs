@@ -9,7 +9,6 @@ namespace Raven.NET.Core.Observers.Interfaces
     /// </summary>
     public interface IRavenTypeWatcher : IRaven
     {
-
         /// <summary>
         /// Create watcher to track all objects of the same type
         /// </summary>
@@ -24,9 +23,22 @@ namespace Raven.NET.Core.Observers.Interfaces
         /// <summary>
         /// Ignore this subject from watching
         /// </summary>
-        /// <param name="name"></param>
         /// <param name="subject"></param>
-        public void Exclude(string name, RavenSubject subject);
+        public void Exclude(RavenSubject subject);
+        
+        /// <summary>
+        /// Update subject list to contain only newest version
+        /// </summary>
+        /// <param name="subject"></param>
+        internal void UpdateNewestSubject(string key, RavenSubject subject);
+
+        /// <summary>
+        /// Attach subject to the list of observable objects
+        /// </summary>
+        /// <param name="subject"></param>
+        internal void AttachSubject(RavenSubject subject);
+        
+        internal string KeyName { get; }
         
         /// <summary>
         /// Detach all subjects from watcher

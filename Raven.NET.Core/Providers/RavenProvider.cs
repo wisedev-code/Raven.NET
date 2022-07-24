@@ -1,3 +1,4 @@
+using System;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
 using Raven.NET.Core.Static;
@@ -9,11 +10,11 @@ namespace Raven.NET.Core.Providers
     public class RavenProvider : IRavenProvider
     {
         /// <inheritdoc/>
-        public bool AddRaven(string ravenName, IRaven raven)
+        public bool AddRaven(string ravenName, IRaven raven, Type subjectType = default)
         {
             if (raven is IRavenTypeWatcher)
             {
-                return RavenCache.RavenWatcherCache.TryAdd(ravenName, raven);
+                return RavenCache.RavenTypeWatcherCache.TryAdd(subjectType, (IRavenTypeWatcher)raven);
             }
 
             return RavenCache.RavenWatcherCache.TryAdd(ravenName, raven);
