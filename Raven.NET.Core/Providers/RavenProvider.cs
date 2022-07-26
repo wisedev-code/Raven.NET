@@ -24,10 +24,16 @@ namespace Raven.NET.Core.Providers
         public bool RemoveRaven(string ravenName) => RavenCache.RavenWatcherCache.TryRemove(ravenName, out _);
 
         /// <inheritdoc/>
-        public IRaven GetRaven(string ravenName)
+        public IRaven GetRaven(string ravenName, Type type = default)
         {
-            RavenCache.RavenWatcherCache.TryGetValue(ravenName, out var result);
-            return result;
+            if (type != default)
+            {
+                RavenCache.RavenTypeWatcherCache.TryGetValue(type, out var typeWatcher);
+                return typeWatcher;
+            }
+
+            RavenCache.RavenWatcherCache.TryGetValue(ravenName, out var watcher);
+            return watcher;
         }
 
         /// <inheritdoc/>

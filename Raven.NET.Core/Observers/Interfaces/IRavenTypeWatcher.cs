@@ -25,6 +25,12 @@ namespace Raven.NET.Core.Observers.Interfaces
         /// </summary>
         /// <param name="subject"></param>
         public void Exclude(RavenSubject subject);
+
+        /// <summary>
+        /// Detach all subjects from watcher
+        /// </summary>
+        /// <param name="name"></param>
+        public void Stop(string name);
         
         /// <summary>
         /// Update subject list to contain only newest version
@@ -37,13 +43,10 @@ namespace Raven.NET.Core.Observers.Interfaces
         /// </summary>
         /// <param name="subject"></param>
         internal void AttachSubject(RavenSubject subject);
-        
-        internal string KeyName { get; }
-        
+
         /// <summary>
-        /// Detach all subjects from watcher
+        /// Property that allows access for Key of typed subject
         /// </summary>
-        /// <param name="name"></param>
-        public void Stop(string name);
+        internal string KeyName { get; }
     }
 }

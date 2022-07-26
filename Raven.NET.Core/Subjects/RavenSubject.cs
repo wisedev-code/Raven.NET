@@ -33,7 +33,7 @@ namespace Raven.NET.Core.Subjects
             Observers.Add(ravenWatcher);
         }
 
-        internal void Detach(IRavenWatcher ravenWatcher)
+        internal void Detach(IRaven ravenWatcher)
         {
             Observers.Remove(ravenWatcher);
             if (!Observers.Any())

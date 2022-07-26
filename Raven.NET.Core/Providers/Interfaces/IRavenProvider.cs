@@ -21,12 +21,13 @@ namespace Raven.NET.Core.Providers.Interfaces
         /// </summary>
         /// <param name="ravenName"></param>
         bool RemoveRaven(string ravenName);
-        
+
         /// <summary>
         /// Method to get raven from collection
         /// </summary>
         /// <param name="ravenName"></param>
-        IRaven GetRaven(string ravenName);
+        /// <param name="isTypedWatcher"></param>
+        IRaven GetRaven(string ravenName, Type type = default);
         
         /// <summary>
         /// Methods check if raven with this name is already specified

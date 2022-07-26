@@ -27,6 +27,7 @@ namespace Raven.NET.Core.Observers
             _ravenSettingsProvider = ravenSettingsProvider;
 
             _ravenSettings.BackgroundWorker = true;
+            _ravenSettings.BackgroundWorkerInterval = 1.0f;
         }
         
         /// <inheritdoc/>
@@ -46,12 +47,13 @@ namespace Raven.NET.Core.Observers
             var ravenSettings = _ravenSettingsProvider.GetRaven(name);
             if (ravenSettings != null)
             {
-                _ravenSettings = ravenSettings;
-
                 if (ravenSettings.BackgroundWorker == null)
                 {
                     ravenSettings.BackgroundWorker = true;
+                    ravenSettings.BackgroundWorkerInterval = 1.0f;
                 }
+                
+                _ravenSettings = ravenSettings;
             }
 
             if (options != null)
@@ -61,27 +63,26 @@ namespace Raven.NET.Core.Observers
 
             if (_ravenSettings.BackgroundWorker.Value)
             {
-                var startTimeSpan = TimeSpan.Zero;
-                var periodTimeSpan = TimeSpan.FromSeconds(1);
-
-                var timer = new System.Threading.Timer((e) => { BackgroundWorkerRun(); }, null, startTimeSpan, periodTimeSpan);
+                new System.Threading.Timer((e) => { BackgroundWorkerRun(); }, null, TimeSpan.Zero, TimeSpan.FromSeconds(_ravenSettings.BackgroundWorkerInterval.Value));
             }
 
             return this;
-        }
-
-        private void BackgroundWorkerRun()
-        {
-            foreach (var subject in _watchedSubjects.ToList())
-            {
-                subject.TryNotify();
-            }
         }
 
         /// <inheritdoc/>
         public void Exclude(RavenSubject subject)
         {
             _watchedSubjects.Remove(subject);
+        }
+        
+        /// <inheritdoc/>
+        public void Stop(string name)
+        {
+            var raven = _ravenProvider.GetRaven(name) as RavenTypeWatcher;
+            raven._watchedSubjects.ForEach(x => x.Detach(this));
+            
+            if(raven._ravenSettings.AutoDestroy)
+                TryDestroy(raven, name);
         }
 
         /// <inheritdoc/>
@@ -97,12 +98,23 @@ namespace Raven.NET.Core.Observers
             _watchedSubjects.Add(subject);
         }
 
-        string IRavenTypeWatcher.KeyName => _keyName;
-
         /// <inheritdoc/>
-        public void Stop(string name)
+        string IRavenTypeWatcher.KeyName => _keyName;
+        
+        private void BackgroundWorkerRun()
         {
-            throw new NotImplementedException();
+            foreach (var subject in _watchedSubjects.ToList())
+            {
+                subject.TryNotify();
+            }
+        }
+        
+        private void TryDestroy(RavenTypeWatcher ravenWatcher, string ravenName)
+        {
+            if (!ravenWatcher._watchedSubjects.Any())
+            {
+                RavenCache.RavenWatcherCache.Remove(ravenName, out _);
+            }
         }
     }
 }
