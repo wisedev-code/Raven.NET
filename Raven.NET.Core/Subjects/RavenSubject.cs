@@ -37,7 +37,9 @@ namespace Raven.NET.Core.Subjects
         {
             Observers.Remove(ravenWatcher);
             if (!Observers.Any())
+            {
                 RavenCache.SubjectCache.Remove(UniqueId, out var _);
+            }
         }
         
         public void TryNotify()
@@ -73,14 +75,14 @@ namespace Raven.NET.Core.Subjects
             var key = type.GetProperty(RavenCache.RavenTypeWatcherCache[type].KeyName).GetValue(this).ToString();
             var valueToStoreInCache = this.CreateCacheValue();
             
-            if (!RavenCache.SubjectTypeCache[type].ContainsKey(key))
+            if (!RavenCache.SubjectTypeCache[type].TryGetValue(key, out string cachedValue))
             {
                 RavenCache.SubjectTypeCache[type].TryAdd(key, valueToStoreInCache);
                 Observers.Add(RavenCache.RavenTypeWatcherCache[type]);
                 return;
             }
 
-            if (RavenCache.SubjectTypeCache[type][key] != valueToStoreInCache)
+            if (cachedValue != valueToStoreInCache)
             {
                 Observers.Add(RavenCache.RavenTypeWatcherCache[type]);
                 RavenCache.RavenTypeWatcherCache[type].UpdateNewestSubject(key, this);

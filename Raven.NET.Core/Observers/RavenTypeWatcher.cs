@@ -80,9 +80,11 @@ namespace Raven.NET.Core.Observers
         {
             var raven = _ravenProvider.GetRaven(name) as RavenTypeWatcher;
             raven._watchedSubjects.ForEach(x => x.Detach(this));
-            
-            if(raven._ravenSettings.AutoDestroy)
+
+            if (raven._ravenSettings.AutoDestroy)
+            {
                 TryDestroy(raven, name);
+            }
         }
 
         /// <inheritdoc/>

@@ -24,10 +24,9 @@ namespace Raven.NET.Demo.Console
                     services.AddSingleton<IRavenWatcher, RavenWatcher>();
                     services.AddSingleton<IRavenProvider, RavenProvider>();
                     services.AddSingleton<IRavenTypeWatcher, RavenTypeWatcher>();
-
                 }).Build();
 
-            var service = ActivatorUtilities.CreateInstance<RavenWatcherDemoService>(host.Services);
+            var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);
             service.Run();
         }
 
