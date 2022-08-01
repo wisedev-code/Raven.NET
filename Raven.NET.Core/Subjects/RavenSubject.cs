@@ -19,6 +19,11 @@ namespace Raven.NET.Core.Subjects
         protected RavenSubject()
         {
             UniqueId = Guid.NewGuid();
+            var type = GetType();
+            if (RavenCache.RavenTypeWatcherCache.ContainsKey(type))
+            {
+                RavenCache.RavenTypeWatcherCache[type].AttachSubject(this);
+            }
         }
 
         internal void Attach(IRaven ravenWatcher)
@@ -28,14 +33,30 @@ namespace Raven.NET.Core.Subjects
             Observers.Add(ravenWatcher);
         }
 
-        internal void Detach(IRavenWatcher ravenWatcher)
+        internal void Detach(IRaven ravenWatcher)
         {
             Observers.Remove(ravenWatcher);
             if (!Observers.Any())
+            {
                 RavenCache.SubjectCache.Remove(UniqueId, out var _);
+            }
         }
         
         public void TryNotify()
+        {
+            var type = GetType();
+            var typeWatcherExists = RavenCache.RavenTypeWatcherCache.ContainsKey(type);
+
+            if (!typeWatcherExists)
+            {
+                SingleWatcherProcessing();
+                return;
+            }
+            
+            TypeWatcherProcessing();
+        }
+
+        private void SingleWatcherProcessing()
         {
             if (RavenCache.SubjectCache.ContainsKey(UniqueId))
             {
@@ -44,6 +65,29 @@ namespace Raven.NET.Core.Subjects
                     RavenCache.SubjectCache[UniqueId] = this.CreateCacheValue();
                     Observers.ForEach(raven => raven.Update(this));
                 }
+            }
+        }
+
+        private void TypeWatcherProcessing()
+        {
+            var type = GetType();
+
+            var key = type.GetProperty(RavenCache.RavenTypeWatcherCache[type].KeyName).GetValue(this).ToString();
+            var valueToStoreInCache = this.CreateCacheValue();
+            
+            if (!RavenCache.SubjectTypeCache[type].TryGetValue(key, out string cachedValue))
+            {
+                RavenCache.SubjectTypeCache[type].TryAdd(key, valueToStoreInCache);
+                Observers.Add(RavenCache.RavenTypeWatcherCache[type]);
+                return;
+            }
+
+            if (cachedValue != valueToStoreInCache)
+            {
+                Observers.Add(RavenCache.RavenTypeWatcherCache[type]);
+                RavenCache.RavenTypeWatcherCache[type].UpdateNewestSubject(key, this);
+                RavenCache.SubjectTypeCache[type][key] = valueToStoreInCache;
+                Observers.ForEach(raven => raven.Update(this));
             }
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Subjects;
 
@@ -13,19 +14,20 @@ namespace Raven.NET.Core.Providers.Interfaces
         /// </summary>
         /// <param name="ravenName"></param>
         /// <param name="raven"></param>
-        bool AddRaven(string ravenName, IRaven raven);
+        bool AddRaven(string ravenName, IRaven raven, Type ravenSubject = default);
         
         /// <summary>
         /// Method removes raven from internal collection
         /// </summary>
         /// <param name="ravenName"></param>
         bool RemoveRaven(string ravenName);
-        
+
         /// <summary>
         /// Method to get raven from collection
         /// </summary>
         /// <param name="ravenName"></param>
-        IRaven GetRaven(string ravenName);
+        /// <param name="isTypedWatcher"></param>
+        IRaven GetRaven(string ravenName, Type type = default);
         
         /// <summary>
         /// Methods check if raven with this name is already specified

@@ -79,7 +79,6 @@ namespace Raven.NET.Core.Observers
                 TryDestroy(raven, name);
         }
 
-        /// <inheritdoc/>
         private void TryDestroy(RavenWatcher ravenWatcher, string ravenName)
         {
             if (!ravenWatcher.watchedSubjects.Any())

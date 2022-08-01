@@ -16,11 +16,7 @@ public class Phone : RavenSubject
         Model = model;
         Price = price;
     }
-
-    public Phone()
-    {
-        throw new NotImplementedException();
-    }
+    
 }
 
 public class RavenWatcherDemoService
