@@ -21,12 +21,13 @@ namespace Raven.NET.Demo.Console
                 .ConfigureServices((_, services) =>
                 {
                     services.ConfigureRaven(builder.Build());
-                    services.AddSingleton<IRavenWatcher, RavenWatcher>();
-                    services.AddSingleton<IRavenProvider, RavenProvider>();
-                    services.AddSingleton<IRavenTypeWatcher, RavenTypeWatcher>();
+                    services.AddTransient<IRavenWatcher, RavenWatcher>();
+                    services.AddTransient<IRavenProvider, RavenProvider>();
+                    services.AddTransient<IRavenTypeWatcher, RavenTypeWatcher>();
                 }).Build();
 
             var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);
+            //var service = ActivatorUtilities.CreateInstance<RavenWatcherDemoService>(host.Services);
             service.Run();
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Raven.NET.Core.Configuration;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
@@ -20,6 +21,9 @@ namespace Raven.NET.Core.Observers
         private List<RavenSubject> _watchedSubjects = new();
         private Func<RavenSubject,bool> _updateAction;
         private string _keyName;
+        
+        private ILogger<RavenTypeWatcher> _logger;
+        private string RavenName;
 
         public RavenTypeWatcher(IRavenProvider ravenProvider, IRavenSettingsProvider ravenSettingsProvider)
         {
@@ -34,11 +38,14 @@ namespace Raven.NET.Core.Observers
         void IRaven.Update(RavenSubject subject)
         {
             _updateAction.Invoke(subject);
+            _logger.LogDebug($"Raven {RavenName} updated with subject {subject.UniqueId}.");
         }
 
         /// <inheritdoc/>
         public IRavenTypeWatcher Create<T>(string name, string keyName, Func<RavenSubject, bool> callback, Action<RavenSettings> options = null) 
         {
+            RavenName = name;
+            
             _updateAction = callback;
             _ravenProvider.AddRaven(name,this, typeof(T));
             RavenCache.SubjectTypeCache.TryAdd(typeof(T), new ConcurrentDictionary<string, string>());
@@ -55,6 +62,13 @@ namespace Raven.NET.Core.Observers
                 
                 _ravenSettings = ravenSettings;
             }
+            
+            _logger = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+                builder.AddDebug();
+                builder.SetMinimumLevel(_ravenSettings.LogLevel);
+            }).CreateLogger<RavenTypeWatcher>();
 
             if (options != null)
             {
@@ -65,6 +79,9 @@ namespace Raven.NET.Core.Observers
             {
                 new System.Threading.Timer((e) => { BackgroundWorkerRun(); }, null, TimeSpan.Zero, TimeSpan.FromSeconds(_ravenSettings.BackgroundWorkerInterval.Value));
             }
+            
+            _logger.LogInformation($"Created new raven. {RavenName}");
+            _logger.LogDebug($"Raven log level: {_ravenSettings.LogLevel}, autoDestroy: {_ravenSettings.AutoDestroy}.");
 
             return this;
         }
@@ -73,31 +90,35 @@ namespace Raven.NET.Core.Observers
         public void Exclude(RavenSubject subject)
         {
             _watchedSubjects.Remove(subject);
+            _logger.LogInformation($"Subject {subject.UniqueId} is excluded from {RavenName} raven watch list.");
         }
         
         /// <inheritdoc/>
         public void Stop(string name)
         {
+            _logger.LogDebug($"Stopping raven {name}");
             var raven = _ravenProvider.GetRaven(name) as RavenTypeWatcher;
             raven._watchedSubjects.ForEach(x => x.Detach(this));
+            _logger.LogInformation($"Detached {raven._watchedSubjects.Count} subjects from raven {RavenName}");
 
             if (raven._ravenSettings.AutoDestroy)
-            {
                 TryDestroy(raven, name);
-            }
         }
 
         /// <inheritdoc/>
         void IRavenTypeWatcher.UpdateNewestSubject(string key, RavenSubject subject)
         {
             _watchedSubjects.RemoveAll(x => x.GetType().GetProperty(_keyName).GetValue(x).ToString() == key);
+            _logger.LogDebug($"Purged {RavenName} raven watch list.");
             _watchedSubjects.Add(subject);
+            _logger.LogDebug($"Subject {subject.UniqueId} is added to {RavenName} raven watch list.");
         }
         
         /// <inheritdoc/>
         void IRavenTypeWatcher.AttachSubject(RavenSubject subject)
         {
             _watchedSubjects.Add(subject);
+            _logger.LogDebug($"Subject {subject.UniqueId} is added to {RavenName} raven watch list.");
         }
 
         /// <inheritdoc/>
@@ -107,16 +128,23 @@ namespace Raven.NET.Core.Observers
         {
             foreach (var subject in _watchedSubjects.ToList())
             {
+                _logger.LogDebug($"Trying to notify subject {subject.UniqueId}");
                 subject.TryNotify();
             }
         }
         
         private void TryDestroy(RavenTypeWatcher ravenWatcher, string ravenName)
         {
+            _logger.LogDebug($"Trying to destroy raven {RavenName}");
+            
             if (!ravenWatcher._watchedSubjects.Any())
             {
                 RavenCache.RavenWatcherCache.Remove(ravenName, out _);
+                _logger.LogInformation($"Removed raven {RavenName}");
+                return;
             }
+            
+            _logger.LogWarning($"Raven {RavenName} is still watching some subjects, can't be destroyed");
         }
     }
 }

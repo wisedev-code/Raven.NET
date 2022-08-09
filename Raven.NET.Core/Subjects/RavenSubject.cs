@@ -14,7 +14,7 @@ namespace Raven.NET.Core.Subjects
     public class RavenSubject
     {
         internal List<IRaven> Observers = new();
-        private Guid UniqueId { get; set; }
+        internal Guid UniqueId { get; set; }
 
         protected RavenSubject()
         {
