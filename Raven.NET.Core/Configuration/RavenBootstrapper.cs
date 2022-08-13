@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Raven.NET.Core.Observers;
+using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers;
 using Raven.NET.Core.Providers.Interfaces;
 
@@ -14,6 +16,10 @@ namespace Raven.NET.Core.Configuration
         {
             services.Configure<Dictionary<string, RavenSettings>>(configuration.GetSection(RavenSectionName));
             services.AddTransient<IRavenSettingsProvider, RavenSettingsProvider>();
+            
+            services.AddTransient<IRavenWatcher, RavenWatcher>();
+            services.AddTransient<IRavenProvider, RavenProvider>();
+            services.AddTransient<IRavenTypeWatcher, RavenTypeWatcher>();
         }
     }
 }

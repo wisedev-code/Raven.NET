@@ -102,7 +102,9 @@ namespace Raven.NET.Core.Observers
             _logger.LogInformation($"Detached {raven._watchedSubjects.Count} subjects from raven {RavenName}");
 
             if (raven._ravenSettings.AutoDestroy)
+            {
                 TryDestroy(raven, name);
+            }
         }
 
         /// <inheritdoc/>

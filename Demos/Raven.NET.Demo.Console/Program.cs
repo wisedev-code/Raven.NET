@@ -21,9 +21,6 @@ namespace Raven.NET.Demo.Console
                 .ConfigureServices((_, services) =>
                 {
                     services.ConfigureRaven(builder.Build());
-                    services.AddTransient<IRavenWatcher, RavenWatcher>();
-                    services.AddTransient<IRavenProvider, RavenProvider>();
-                    services.AddTransient<IRavenTypeWatcher, RavenTypeWatcher>();
                 }).Build();
 
             var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);

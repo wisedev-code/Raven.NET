@@ -98,9 +98,11 @@ namespace Raven.NET.Core.Observers
             var raven = _ravenProvider.GetRaven(name) as RavenWatcher;
             raven.watchedSubjects.ForEach(x => x.Detach(this));
             _logger.LogInformation($"Detached {raven.watchedSubjects.Count} subjects from raven {RavenName}");
-            
+
             if (raven._ravenSettings.AutoDestroy)
+            {
                 TryDestroy(raven, name);
+            }
         }
 
         private void TryDestroy(RavenWatcher ravenWatcher, string ravenName)
