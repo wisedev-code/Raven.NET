@@ -29,5 +29,5 @@ jobs:
        # Filepath of the project to be packaged, relative to root of repository
        PROJECT_FILE_PATH: ./Raven.NET.Core/Raven.NET.Core.csproj
        # NuGet package id, used for version detection & defaults to project name
-
-       NUGET_KEY: # optional
+       VERSION_REGEX: ^<Version>(.*)<\/Version>$
+       #NUGET_KEY: # optional
