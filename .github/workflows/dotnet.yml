@@ -18,16 +18,16 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./Raven.NET.Core/Raven.NET.Core.csproj
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore ./Raven.NET.Core/Raven.NET.Core.csproj
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal ./Raven.NET.Core/Raven.NET.Core.csproj
     - name: Publish NuGet
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
        # Filepath of the project to be packaged, relative to root of repository
-       PROJECT_FILE_PATH: ./Raven.NET/Raven.NET.Core.csproj
+       PROJECT_FILE_PATH: ./Raven.NET.Core/Raven.NET.Core.csproj
        # NuGet package id, used for version detection & defaults to project name
 
        NUGET_KEY: # optional
