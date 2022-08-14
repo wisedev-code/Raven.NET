@@ -27,4 +27,6 @@ jobs:
       run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj --output ./Raven.NET.Core /p:Version=${{ github.run_number }}
       
     - name: Publish NuGet
-      run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ github.run_number }}.0.0.nupkg --source https://api.nuget.org/v3/index.json --symbol-api-key ${{ secrets.NUGET_SECRET }} 
+      run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ github.run_number }}.0.0.nupkg -s https://api.nuget.org/v3/index.json -k ${{ NUGET_AUTH_TOKEN }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_SECRET }}
