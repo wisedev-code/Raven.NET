@@ -26,5 +26,8 @@ jobs:
     - name: Build NuGet
       run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj --output ./Raven.NET.Core /p:Version=${{ github.run_number }}
       
+    - name: Set Api Key
+      run: nuget setapikey ${{ secrets.NUGET_SECRET }}
+    
     - name: Publish NuGet
-      run: nuget setapikey ${{ secrets.NUGET_SECRET }}  && dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ github.run_number }}.0.0.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_SECRET }}
+      run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ github.run_number }}.0.0.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_SECRET }}
