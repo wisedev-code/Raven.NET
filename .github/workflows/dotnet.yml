@@ -24,7 +24,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal ./Raven.NET.Core/Raven.NET.Core.csproj
     - name: Build NuGet
-      run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj /p:Version=${{ github.run_number }}
+      run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj --output ./Raven.NET.Core /p:Version=${{ github.run_number }}
       
     - name: Publish NuGet
       run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ github.run_number }}.0.0.nupkg --source https://api.nuget.org/v3/index.json
