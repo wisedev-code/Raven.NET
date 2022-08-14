@@ -7,6 +7,6 @@ namespace Raven.NET.Core.Configuration
         public bool AutoDestroy { get; set; }
         public bool? BackgroundWorker { get; set; }
         public double? BackgroundWorkerInterval { get; set; }
-        public LogLevel LogLevel { get; set; }
+        public LogLevel LogLevel { get; set; } = LogLevel.Warning;
     }
 }

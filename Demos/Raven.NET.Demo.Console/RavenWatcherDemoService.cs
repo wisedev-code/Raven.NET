@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Logging;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Subjects;
 
@@ -21,11 +22,18 @@ public class Phone : RavenSubject
 
 public class RavenWatcherDemoService
 {
-    private readonly IRavenWatcher _ravenWatcher;
-    
-    public RavenWatcherDemoService(IRavenWatcher ravenWatcher)
+    private readonly IRavenWatcher _ravenWatcher1;
+    private readonly IRavenWatcher _ravenWatcher2;
+    private readonly IRavenWatcher _ravenWatcher3;
+
+    public RavenWatcherDemoService(
+        IRavenWatcher ravenWatcher1,
+        IRavenWatcher ravenWatcher2,
+        IRavenWatcher ravenWatcher3)
     {
-        _ravenWatcher = ravenWatcher;
+        _ravenWatcher1 = ravenWatcher1;
+        _ravenWatcher2 = ravenWatcher2;
+        _ravenWatcher3 = ravenWatcher3;
     }
     
     public void Run()
@@ -35,12 +43,23 @@ public class RavenWatcherDemoService
         var testPhone2 = new Phone("Zaiomy", "Wedmi Note 8", 340);
         var testPhone3 = new Phone("Kokorola", "H7", 450);
 
-        var watcher = _ravenWatcher.Create("Raven1", PhoneUpdated, (options) =>
+        var watcher1 = _ravenWatcher1.Create("Raven1", PhoneUpdated, (options) =>
             {
                 options.AutoDestroy = true;
             });
 
-        watcher.Watch(testPhone1);
+        var watcher2 = _ravenWatcher2.Create("Raven2", PhoneUpdated, (options) =>
+        {
+            options.AutoDestroy = true;
+        });
+        var watcher3 = _ravenWatcher3.Create("Raven3", PhoneUpdated, (options) =>
+        {
+            options.AutoDestroy = true;
+        });
+
+        watcher1.Watch(testPhone1);
+        watcher2.Watch(testPhone1);
+        watcher3.Watch(testPhone1);
 
         testPhone1.Price = 550;
         testPhone1.TryNotify();
@@ -48,23 +67,25 @@ public class RavenWatcherDemoService
         //Will not do anything because its not watched
         testPhone2.Price = 400;
         testPhone2.TryNotify();
-
-        watcher.Watch(testPhone2).Watch(testPhone3);
-
+        
+        watcher1.Watch(testPhone2).Watch(testPhone3);
+        
         testPhone2.Price = 420;
         testPhone2.TryNotify();
         
         //will not do anything because its not changed
         testPhone3.TryNotify();
         
-        watcher.Stop("Raven1");
-
+        watcher1.Stop("Raven1");
+        
         testPhone1.Price = 200;
         testPhone2.Price = 400; 
         testPhone3.Price = 800;
         testPhone1.TryNotify();
         testPhone2.TryNotify();
         testPhone3.TryNotify();
+
+        System.Console.ReadLine();
     }
 
     private bool PhoneUpdated(RavenSubject ravenSubject)
