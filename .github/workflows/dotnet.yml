@@ -23,11 +23,8 @@ jobs:
       run: dotnet build --no-restore ./Raven.NET.Core/Raven.NET.Core.csproj
     - name: Test
       run: dotnet test --no-build --verbosity normal ./Raven.NET.Core/Raven.NET.Core.csproj
+    - name: Build NuGet
+      run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj /p:Version=$(Build.BuildNumber)
+      
     - name: Publish NuGet
-      uses: brandedoutcast/publish-nuget@v2.5.5
-      with:
-       # Filepath of the project to be packaged, relative to root of repository
-       PROJECT_FILE_PATH: ./Raven.NET.Core/Raven.NET.Core.csproj
-       # NuGet package id, used for version detection & defaults to project name
-       VERSION_REGEX: ^<Version>(.*)<\/Version>$
-       #NUGET_KEY: # optional
+      run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.$(Build.BuildNumber).nupkg --source https://api.nuget.org/v3/index.json
