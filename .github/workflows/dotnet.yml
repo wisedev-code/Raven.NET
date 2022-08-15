@@ -28,7 +28,7 @@ jobs:
   publishAlpha:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'pull_request' }}
+    if: ${{ github.event.pull_request.base.ref == 'refs/heads/main' && github.event_name == 'pull_request' }}
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -47,7 +47,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    if: ${{ github.event.pull_request.base.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == 'true' }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
@@ -55,10 +55,10 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Build NuGet
-        run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj --output ./Raven.NET.Core /p:Version=${{ secrets.NUGET_MAJOR_VERSION }}.${{ secrets.NUGET_MINOR_VERSION }}.${{ github.run_number }}
+        run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj --output ./Raven.NET.Core /p:Version=${{ secrets.NUGET_MAJOR_VERSION }}.${{ secrets.NUGET_MINOR_VERSION }}.0
 
       - name: Set Api Key
         run: nuget setapikey ${{ secrets.NUGET_SECRET }}
 
       - name: Publish NuGet
-        run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ secrets.NUGET_MAJOR_VERSION }}.${{ secrets.NUGET_MINOR_VERSION }}.${{ github.run_number }}.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_SECRET }}
+        run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ secrets.NUGET_MAJOR_VERSION }}.${{ secrets.NUGET_MINOR_VERSION }}.0.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_SECRET }}
