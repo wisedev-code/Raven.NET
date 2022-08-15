@@ -22,10 +22,10 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal ./Raven.NET.Core/Raven.NET.Core.csproj
     - name: Build NuGet
-      run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj --output ./Raven.NET.Core /p:Version=${{ github.run_number }}
+      run: dotnet pack ./Raven.NET.Core/Raven.NET.Core.csproj --output ./Raven.NET.Core /p:Version=${{ NUGET_MAJOR_VERSION }}.${{ NUGET_MINOR_VERSION }}.${{ github.run_number }}-alpha
       
     - name: Set Api Key
       run: nuget setapikey ${{ secrets.NUGET_SECRET }}
     
     - name: Publish NuGet
-      run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ github.run_number }}.0.0.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_SECRET }}
+      run: dotnet nuget push ./Raven.NET.Core/Raven.NET.Core.${{ NUGET_MAJOR_VERSION }}.${{ NUGET_MINOR_VERSION }}.${{ github.run_number }}-alpha.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_SECRET }}
