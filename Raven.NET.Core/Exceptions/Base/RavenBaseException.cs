@@ -4,11 +4,13 @@ namespace Raven.NET.Core.Exceptions
 {
     public class RavenBaseException : Exception
     {
-        public RavenBaseException(string code)
+        public RavenBaseException(string message)
         {
-            Code = code;
+            _message = message;
         }
-        
-        internal string Code { get; }
+
+        public override string Message => _message + " Krraa!";
+        protected string Code { get; set; }
+        private string _message { get; }
     }
 }
