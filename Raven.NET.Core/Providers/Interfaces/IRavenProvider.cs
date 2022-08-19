@@ -14,13 +14,13 @@ namespace Raven.NET.Core.Providers.Interfaces
         /// </summary>
         /// <param name="ravenName"></param>
         /// <param name="raven"></param>
-        bool AddRaven(string ravenName, IRaven raven, Type ravenSubject = default);
+        void AddRaven(string ravenName, IRaven raven, Type ravenSubject = default);
         
         /// <summary>
         /// Method removes raven from internal collection
         /// </summary>
         /// <param name="ravenName"></param>
-        bool RemoveRaven(string ravenName);
+        void RemoveRaven(string ravenName);
 
         /// <summary>
         /// Method to get raven from collection

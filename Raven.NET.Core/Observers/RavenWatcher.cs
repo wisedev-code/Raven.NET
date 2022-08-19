@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Raven.NET.Core.Configuration;
+using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
 using Raven.NET.Core.Static;
@@ -33,8 +34,20 @@ namespace Raven.NET.Core.Observers
         /// <inheritdoc/>
         void IRaven.Update(RavenSubject subject)
         {
-            updateAction(subject);
-            _logger.LogDebug($"Raven {RavenName} updated with subject {subject.UniqueId}.");
+            try
+            {
+                updateAction(subject);
+                _logger.LogDebug($"Raven {RavenName} updated with subject {subject.UniqueId}.");
+            }
+            catch (Exception ex)
+            {
+                if (_ravenSettings.BreakOnUpdateException)
+                {
+                    throw new RavenUpdateCallbackException(RavenName, ex.Message);
+                }
+                
+                _logger.LogError($"Raven: {RavenName} encounter error on running update callback ({ex.Message})");
+            }
         }
 
         /// <inheritdoc/>
@@ -74,6 +87,11 @@ namespace Raven.NET.Core.Observers
         /// <inheritdoc/>
         public IRavenWatcher Watch(RavenSubject subject)
         {
+            if (watchedSubjects.Contains(subject))
+            {
+                throw new SubjectAlreadyWatchedException(subject.UniqueId.ToString());
+            }
+            
             subject.Attach(this);
             watchedSubjects.Add(subject);
             _logger.LogInformation($"Subject {subject.UniqueId} is now watched by {RavenName}");
@@ -96,7 +114,7 @@ namespace Raven.NET.Core.Observers
         {
             _logger.LogDebug($"Stopping raven {name}");
             var raven = _ravenProvider.GetRaven(name) as RavenWatcher;
-            raven.watchedSubjects.ForEach(x => x.Detach(this));
+            watchedSubjects.ForEach(x => x.Detach(this));
             _logger.LogInformation($"Detached {raven.watchedSubjects.Count} subjects from raven {RavenName}");
 
             if (raven._ravenSettings.AutoDestroy)
@@ -115,6 +133,7 @@ namespace Raven.NET.Core.Observers
                 _logger.LogInformation($"Removed raven {RavenName}");
                 return;
             }
+            
             _logger.LogWarning($"Raven {RavenName} is still watching some subjects, can't be destroyed");
         }
     }
