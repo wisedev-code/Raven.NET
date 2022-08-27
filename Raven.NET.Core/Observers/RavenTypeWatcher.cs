@@ -19,12 +19,13 @@ namespace Raven.NET.Core.Observers
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
 
         private RavenSettings _ravenSettings = new();
-        private List<RavenSubject> _watchedSubjects = new();
         private Func<RavenSubject,bool> _updateAction;
         private string _keyName;
         
         private ILogger<RavenTypeWatcher> _logger;
         private string RavenName;
+        
+        internal List<RavenSubject> _watchedSubjects = new();
 
         public RavenTypeWatcher(IRavenProvider ravenProvider, IRavenSettingsProvider ravenSettingsProvider)
         {

@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Raven.NET.Core.Exceptions;
+using Raven.NET.Core.Observers;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
 using Raven.NET.Core.Static;
@@ -16,17 +19,31 @@ namespace Raven.NET.Core.Providers
             if (raven is IRavenTypeWatcher)
             {
                 var existWithType = !RavenCache.RavenTypeWatcherCache.TryAdd(subjectType, (IRavenTypeWatcher)raven);
-                if (!existWithType)
+                if (existWithType)
                 {
                     throw new RavenForTypeAlreadyExistException(subjectType);
                 }
             }
 
             var existWithName = !RavenCache.RavenWatcherCache.TryAdd(ravenName, raven);
-            if (!existWithName)
+            if (existWithName)
             {
                 throw new RavenAlreadyExistException(ravenName);
             }
+        }
+
+        void IRavenProvider.UpdateSubjects(string ravenName, IEnumerable<RavenSubject> subjects, Type type = default)
+        {
+            if (type != default)
+            {
+                var ravenTypeWatcher = RavenCache.RavenTypeWatcherCache[type] as RavenTypeWatcher;
+                ravenTypeWatcher._watchedSubjects = subjects.ToList();
+                RavenCache.RavenTypeWatcherCache[type] = ravenTypeWatcher;
+            }
+
+            var ravenWatcher = RavenCache.RavenWatcherCache[ravenName] as RavenWatcher;
+            ravenWatcher._watchedSubjects = subjects.ToList();
+            RavenCache.RavenWatcherCache[ravenName] = ravenWatcher;
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Subjects;
 
@@ -15,6 +17,14 @@ namespace Raven.NET.Core.Providers.Interfaces
         /// <param name="ravenName"></param>
         /// <param name="raven"></param>
         void AddRaven(string ravenName, IRaven raven, Type ravenSubject = default);
+
+        /// <summary>
+        /// Method to update raven internal collection of subject
+        /// </summary>
+        /// <param name="ravenName"></param>
+        /// <param name="observers"></param>
+        /// <param name="type"></param>
+        internal void UpdateSubjects(string ravenName, IEnumerable<RavenSubject> observers, Type type = default);
         
         /// <summary>
         /// Method removes raven from internal collection
