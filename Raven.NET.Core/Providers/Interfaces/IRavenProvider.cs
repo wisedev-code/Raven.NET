@@ -16,6 +16,7 @@ namespace Raven.NET.Core.Providers.Interfaces
         /// </summary>
         /// <param name="ravenName"></param>
         /// <param name="raven"></param>
+        /// <param name="ravenSubject"></param>
         void AddRaven(string ravenName, IRaven raven, Type ravenSubject = default);
 
         /// <summary>

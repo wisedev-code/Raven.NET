@@ -21,18 +21,18 @@ namespace Raven.NET.Core.Providers
                 var existWithType = !RavenCache.RavenTypeWatcherCache.TryAdd(subjectType, (IRavenTypeWatcher)raven);
                 if (existWithType)
                 {
-                    throw new RavenForTypeAlreadyExistException(subjectType);
+                    throw new RavenForTypeAlreadyExistsException(subjectType);
                 }
             }
 
             var existWithName = !RavenCache.RavenWatcherCache.TryAdd(ravenName, raven);
             if (existWithName)
             {
-                throw new RavenAlreadyExistException(ravenName);
+                throw new RavenAlreadyExistsException(ravenName);
             }
         }
 
-        void IRavenProvider.UpdateSubjects(string ravenName, IEnumerable<RavenSubject> subjects, Type type = default)
+        void IRavenProvider.UpdateSubjects(string ravenName, IEnumerable<RavenSubject> subjects, Type type)
         {
             if (type != default)
             {
@@ -52,7 +52,7 @@ namespace Raven.NET.Core.Providers
             var notExist = !RavenCache.RavenWatcherCache.TryRemove(ravenName, out _);
             if (notExist)
             {
-                throw new RavenDoesNotExistException(ravenName);
+                throw new RavenDoesNotExistsException(ravenName);
             }
         }
 
