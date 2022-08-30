@@ -10,7 +10,8 @@
         <Authors>Wisedev, Piotr Świerad, Maciej Cebula</Authors>
         <Company>Wisedev</Company>
         <Description>Observer pattern in .NET with a few additions and animal reference.</Description>
-        <License>MIT</License>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/wisedev-code/Raven.NET</PackageProjectUrl>
         <RepositoryUrl>https://github.com/wisedev-code/Raven.NET</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageIcon>icon.png</PackageIcon>
