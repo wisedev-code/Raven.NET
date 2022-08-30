@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Raven.NET.Core.Configuration;
+using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
 using Raven.NET.Core.Static;
@@ -18,12 +19,13 @@ namespace Raven.NET.Core.Observers
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
 
         private RavenSettings _ravenSettings = new();
-        private List<RavenSubject> _watchedSubjects = new();
         private Func<RavenSubject,bool> _updateAction;
         private string _keyName;
         
         private ILogger<RavenTypeWatcher> _logger;
         private string RavenName;
+        
+        internal List<RavenSubject> _watchedSubjects = new();
 
         public RavenTypeWatcher(IRavenProvider ravenProvider, IRavenSettingsProvider ravenSettingsProvider)
         {
@@ -37,8 +39,20 @@ namespace Raven.NET.Core.Observers
         /// <inheritdoc/>
         void IRaven.Update(RavenSubject subject)
         {
-            _updateAction.Invoke(subject);
-            _logger.LogDebug($"Raven {RavenName} updated with subject {subject.UniqueId}.");
+            try
+            {
+                _updateAction(subject);
+                _logger.LogDebug($"Raven {RavenName} updated with subject {subject.UniqueId}.");
+            }
+            catch (Exception ex)
+            {
+                if (_ravenSettings.BreakOnUpdateException)
+                {
+                    throw new RavenUpdateCallbackException(RavenName, ex.Message);
+                }
+                
+                _logger.LogError($"Raven: {RavenName} encounter error on running update callback ({ex.Message})");
+            }
         }
 
         /// <inheritdoc/>
@@ -119,6 +133,11 @@ namespace Raven.NET.Core.Observers
         /// <inheritdoc/>
         void IRavenTypeWatcher.AttachSubject(RavenSubject subject)
         {
+            if (_watchedSubjects.Contains(subject))
+            {
+                throw new SubjectAlreadyWatchedException(subject.UniqueId.ToString());
+            }
+            
             _watchedSubjects.Add(subject);
             _logger.LogDebug($"Subject {subject.UniqueId} is added to {RavenName} raven watch list.");
         }

@@ -60,9 +60,10 @@ namespace Raven.NET.Core.Subjects
         {
             if (RavenCache.SubjectCache.ContainsKey(UniqueId))
             {
-                if (RavenCache.SubjectCache[UniqueId] != this.CreateCacheValue())
+                var valueToCache = this.CreateCacheValue();
+                if (RavenCache.SubjectCache[UniqueId] != valueToCache)
                 {
-                    RavenCache.SubjectCache[UniqueId] = this.CreateCacheValue();
+                    RavenCache.SubjectCache[UniqueId] = valueToCache;
                     Observers.ForEach(raven => raven.Update(this));
                 }
             }
