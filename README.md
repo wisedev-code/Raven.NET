@@ -1,6 +1,15 @@
 # Raven.NET
 ## Installation
-## Usage
+To make use of Raven.NET library and its most important features you need to install Core nuget package, you can do this with *dotnet* command like this:
+> dotnet add package Raven.NET.Core
+
+or via nuget package manager console:
+
+> Install-Package Raven.NET.Core 
+
+To check newest updates and additional information please check direct link:
+https://www.nuget.org/packages/Raven.NET.Core
+## Getting started
 ## Docs
 ## Why the name raven?
 <img align="right" height="400" width="300" src="https://user-images.githubusercontent.com/105814382/169652167-82a3570b-0c55-4498-b313-1a66eeec893f.png"/>
