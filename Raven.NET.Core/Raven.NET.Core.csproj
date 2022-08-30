@@ -9,6 +9,10 @@
         <PackageId>Raven.NET.Core</PackageId>
         <Authors>Wisedev, Piotr Świerad, Maciej Cebula</Authors>
         <Company>Wisedev</Company>
+        <Description>Observer pattern in .NET with a few additions and animal reference.</Description>
+        <License>MIT</License>
+        <ProjectUrl>https://github.com/wisedev-code/Raven.NET</ProjectUrl>
+        <Icon>icon.png</Icon>
     </PropertyGroup>
     
     <ItemGroup>
