@@ -13,7 +13,7 @@
         <License>MIT</License>
         <RepositoryUrl>https://github.com/wisedev-code/Raven.NET</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageIcon>../icon.png</PackageIcon>
+        <PackageIcon>..\icon.png</PackageIcon>
     </PropertyGroup>
     
     <ItemGroup>
