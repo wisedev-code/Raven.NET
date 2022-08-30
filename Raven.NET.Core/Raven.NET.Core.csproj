@@ -5,6 +5,12 @@
         <LangVersion>9</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageId>Raven.NET.Core</PackageId>
+        <Authors>Wisedev, Piotr Świerad, Maciej Cebula</Authors>
+        <Company>Wisedev</Company>
+    </PropertyGroup>
+    
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
