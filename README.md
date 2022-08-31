@@ -20,7 +20,7 @@ To use Raven.NET first step is to register necesary dependencies in service coll
         }).Build();
 ```
 
-Then to make use of the most simple observer you should inject IRavenWatcher interface.
+Then to make use of the most simple observer you should inject *IRavenWatcher* interface.
 With this you can create new watchers by using _Create_ method. It needs 2 parameters, when first is name of watcher (needs to be unique) and second is callback where we will get updates. Additionally it can have third parameter which is options, if not provided it will load options from appsettings and if those does not exist then it will use default configuration. Example of usage is shown below:
 
 ```
@@ -43,6 +43,26 @@ testPhone2.TryNotify();
 And we get in our console logged:
 
 ![image](https://user-images.githubusercontent.com/111281468/187757222-ce7eebeb-6cd6-4a43-a5ce-2fb04d773ad3.png)
+
+#### Raven Type Watcher
+In addition we have implementation for watcher that allows to watch all objects of given type automaticly and checks for updates, this may be really usefull when you dont have strict control over objects in your system (you want to check for updates in lots of objects that you get form database, or load any other different way to your application). Implementation looks similar but has some core differences. And for this case you need to inject *IRavenTypeWatcher*
+
+Creation looks similar, difference is that you need to provide type as generic parameter and additionally key that is unique for objects of this type.
+
+```
+_ravenTypeWatcher.Create<Car>("RavenTypeWatcherExample", nameof(Console.Car.Id), Callback);
+```
+
+That is basically it, and now when you will have new object with same id, it will be considered as update (if its different)
+
+```
+ var Car = new Car(1231, "Qudi", "Q2", 40000);
+        
+ var Car2 = new Car(1231, "Qudi", "Q2", 43000);
+```
+
+![image](https://user-images.githubusercontent.com/111281468/187761669-055672e4-0c2c-4057-8bf4-fc11fe38df56.png)
+
 
 ## Docs
 <img src="https://cdn-icons-png.flaticon.com/512/5229/5229377.png" width="200" height="200" />
