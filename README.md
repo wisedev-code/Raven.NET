@@ -1,4 +1,9 @@
 # Raven.NET
+
+![Build Status](https://github.com/wisedev-code/Raven.NET/actions/workflows/dotnet.yml/badge.svg)
+
+![Download Count](https://img.shields.io/nuget/dt/Raven.NET.Core?label=Nuget%20Downloads%3A&style=plastic)
+
 ## Installation
 To make use of Raven.NET library and its most important features you need to install Core nuget package, you can do this with *dotnet* command like this:
 > dotnet add package Raven.NET.Core
