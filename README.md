@@ -1,6 +1,6 @@
 # Raven.NET
 
-Hello, this page is about the Raven.NET framework which is an implementation of the observer pattern with several extensions that can be used for a variety of benefits. The name is not accidental and is intended, more precisely described as the last paragraph of this page. If you have suggestions for development, please contact us or create an issue.
+Hello, this page is about the Raven.NET framework which is an implementation of the observer pattern with several extensions that can be used for a variety of benefits. The name is not accidental and is intended, more precisely described as the last paragraph of this page. If you have suggestions for development, please contact us or create an issue and mark it with correct label.
 
 ![Build Status](https://github.com/wisedev-code/Raven.NET/actions/workflows/dotnet.yml/badge.svg) ![Download Count](https://img.shields.io/nuget/dt/Raven.NET.Core?label=Nuget%20Downloads%3A&style=plastic)
 
