@@ -1,8 +1,8 @@
 # Raven.NET
 
-![Build Status](https://github.com/wisedev-code/Raven.NET/actions/workflows/dotnet.yml/badge.svg)
+Hello, this page is about the Raven.NET framework which is an implementation of the observer pattern with several extensions that can be used for a variety of benefits. The name is not accidental and is intended, more precisely described as the last paragraph of this page. If you have suggestions for development, please contact us or create an issue.
 
-![Download Count](https://img.shields.io/nuget/dt/Raven.NET.Core?label=Nuget%20Downloads%3A&style=plastic)
+![Build Status](https://github.com/wisedev-code/Raven.NET/actions/workflows/dotnet.yml/badge.svg) ![Download Count](https://img.shields.io/nuget/dt/Raven.NET.Core?label=Nuget%20Downloads%3A&style=plastic)
 
 ## Installation
 To make use of Raven.NET library and its most important features you need to install Core nuget package, you can do this with *dotnet* command like this:
