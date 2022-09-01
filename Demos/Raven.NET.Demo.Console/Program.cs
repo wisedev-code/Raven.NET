@@ -16,11 +16,12 @@ namespace Raven.NET.Demo.Console
         {
             var builder = new ConfigurationBuilder();
             BuildConfiguration(builder);
+            IConfiguration configuration = builder.Build();
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
                 {
-                    services.ConfigureRaven(builder.Build());
+                    services.ConfigureRaven(configuration);
                 }).Build();
 
             var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);

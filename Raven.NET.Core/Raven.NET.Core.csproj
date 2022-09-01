@@ -5,6 +5,18 @@
         <LangVersion>9</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageId>Raven.NET.Core</PackageId>
+        <Authors>Wisedev, Piotr Świerad, Maciej Cebula</Authors>
+        <Company>Wisedev</Company>
+        <Description>Observer pattern in .NET with a few additions and animal reference.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/wisedev-code/Raven.NET</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/wisedev-code/Raven.NET</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageIcon>icon.png</PackageIcon>
+    </PropertyGroup>
+    
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
@@ -12,6 +24,10 @@
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
