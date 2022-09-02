@@ -61,11 +61,21 @@ namespace Raven.NET.Core.Providers
         {
             if (type != default)
             {
-                RavenCache.RavenTypeWatcherCache.TryGetValue(type, out var typeWatcher);
+                var typeExists = RavenCache.RavenTypeWatcherCache.TryGetValue(type, out var typeWatcher);
+                if (!typeExists)
+                {
+                    throw new RavenDoesNotExistsException(ravenName);
+                }
+                
                 return typeWatcher;
             }
 
-            RavenCache.RavenWatcherCache.TryGetValue(ravenName, out var watcher);
+            var exists = RavenCache.RavenWatcherCache.TryGetValue(ravenName, out var watcher);
+            if (!exists)
+            {
+                throw new RavenDoesNotExistsException(ravenName);
+            }
+            
             return watcher;
         }
 

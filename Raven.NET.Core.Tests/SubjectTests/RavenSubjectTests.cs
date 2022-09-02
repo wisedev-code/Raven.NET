@@ -10,17 +10,16 @@ using Xunit;
 
 namespace Raven.NET.Core.Tests.SubjectTests;
 
+[Collection("Tests")]
 public class RavenSubjectTests
 {
     private readonly Mock<IRavenWatcher> _ravenWatcher;
     private readonly Mock<IRavenTypeWatcher> _ravenTypeWatcher;
-    private Fixture _fixture;
     
     public RavenSubjectTests()
     {
         _ravenWatcher = new Mock<IRavenWatcher>();
         _ravenTypeWatcher = new Mock<IRavenTypeWatcher>();
-        _fixture = new Fixture();
     }
     
     [Fact]
@@ -37,13 +36,16 @@ public class RavenSubjectTests
         result.Observers.ShouldContain(_ravenWatcher.Object);
         RavenCache.SubjectCache.ShouldNotBeEmpty();
         RavenCache.SubjectCache.ShouldContainKey(result.UniqueId);
+        
+        RavenCache.SubjectCache.Clear();
     }
     
     [Fact]
     void CreateRavenSubject_Should_AddSubjectToTypeCache_When_TypeWatcherExists()
     {
         //Arrange
-        var mockedSubject = _fixture.Create<TestSubjectEntity>();
+        var fixture = new Fixture();
+        var mockedSubject = fixture.Build<TestSubjectEntity>().Create();
         RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), _ravenTypeWatcher.Object);
         _ravenTypeWatcher.Setup(x => x.AttachSubject(It.IsAny<RavenSubject>())).Callback(() =>
         {
@@ -55,11 +57,53 @@ public class RavenSubjectTests
         //Act
         var result = new TestSubjectEntity();
         
+        //We need some time for watcher to complete its task
+        Thread.Sleep(2000);
+        
         //Assert
         result.UniqueId.ShouldNotBe(Guid.Empty);
         mockedSubject.Observers.ShouldContain(_ravenTypeWatcher.Object);
         RavenCache.SubjectTypeCache.ShouldNotBeEmpty();
         RavenCache.SubjectTypeCache.ShouldContainKey(typeof(TestSubjectEntity));
         RavenCache.SubjectTypeCache[typeof(TestSubjectEntity)].ShouldContainKey(mockedSubject.UniqueId.ToString());
+        
+        RavenCache.SubjectTypeCache.Clear();
+        RavenCache.RavenTypeWatcherCache.Clear();
+    }
+
+    [Fact]
+    void DetachRavenSubject_Should_RemoveSubjectFromCache()
+    {
+        //Arrange
+        var fixture = new Fixture();
+        var mockedSubject = fixture.Build<TestSubjectEntity>().Create();
+        RavenCache.SubjectCache.TryAdd(mockedSubject.UniqueId, mockedSubject.CreateCacheValue());
+        mockedSubject.Attach(_ravenWatcher.Object);
+        
+        //Act
+        mockedSubject.Detach(_ravenWatcher.Object);
+        mockedSubject.Observers.ShouldBeEmpty();
+        
+        RavenCache.SubjectCache.Clear();
+    }
+    
+    [Fact]
+    void Notify_Should_CallUpdateOnWatchers()
+    {
+        //Arrange
+        var fixture = new Fixture();
+        var mockedSubject = fixture.Create<TestSubjectEntity>();
+        RavenCache.SubjectCache.TryAdd(mockedSubject.UniqueId, mockedSubject.CreateCacheValue());
+        mockedSubject.Attach(_ravenWatcher.Object);
+        
+        //Act
+        mockedSubject.Value = "Value";
+        mockedSubject.Changed = true;
+        mockedSubject.TryNotify();
+        
+        mockedSubject.Observers.ShouldContain(_ravenWatcher.Object);
+        _ravenWatcher.Verify(x => x.Update(mockedSubject));
+        
+        RavenCache.SubjectCache.Clear();
     }
 }
