@@ -47,7 +47,7 @@ public class RavenWatcherTests
         RavenCache.RavenWatcherCache.ShouldContainKey(watcherName);
         var settings = (sut as RavenWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Warning);
-        settings.AutoDestroy.ShouldBe(true);
+        settings.AutoDestroy.ShouldBe(false);
         _ravenProvider.Verify(x => x.AddRaven(watcherName, sut, null));
         _ravenSettingsProvider.Verify(x => x.GetRaven(watcherName));
     }
