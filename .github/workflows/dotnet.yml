@@ -33,7 +33,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Test
-      run: dotnet test ./Raven.NET.Core.Tests/Raven.NET.Core.Tests.csproj
+      run: dotnet test
     - name: echo
       run: echo ${{ github.ref }} ${{ github.event_name }}
 

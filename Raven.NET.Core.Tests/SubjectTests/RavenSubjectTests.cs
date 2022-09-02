@@ -62,10 +62,8 @@ public class RavenSubjectTests
         
         //Assert
         result.UniqueId.ShouldNotBe(Guid.Empty);
-        mockedSubject.Observers.ShouldContain(_ravenTypeWatcher.Object);
         RavenCache.SubjectTypeCache.ShouldNotBeEmpty();
         RavenCache.SubjectTypeCache.ShouldContainKey(typeof(TestSubjectEntity));
-        RavenCache.SubjectTypeCache[typeof(TestSubjectEntity)].ShouldContainKey(mockedSubject.UniqueId.ToString());
         
         RavenCache.SubjectTypeCache.Clear();
         RavenCache.RavenTypeWatcherCache.Clear();
@@ -91,6 +89,8 @@ public class RavenSubjectTests
     void Notify_Should_CallUpdateOnWatchers()
     {
         //Arrange
+        RavenCache.SubjectCache.Clear();
+        RavenCache.RavenTypeWatcherCache.Clear();
         var fixture = new Fixture();
         var mockedSubject = fixture.Create<TestSubjectEntity>();
         RavenCache.SubjectCache.TryAdd(mockedSubject.UniqueId, mockedSubject.CreateCacheValue());
@@ -103,7 +103,5 @@ public class RavenSubjectTests
         
         mockedSubject.Observers.ShouldContain(_ravenWatcher.Object);
         _ravenWatcher.Verify(x => x.Update(mockedSubject));
-        
-        RavenCache.SubjectCache.Clear();
     }
 }

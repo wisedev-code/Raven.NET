@@ -65,6 +65,7 @@ public class RavenProviderTests
     void AddRaven_Should_AddRavenToInternalRavenTypeCache_WhenTypeProvided()
     {
         //Arrange 
+        RavenCache.RavenTypeWatcherCache.Clear();
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
 
@@ -73,8 +74,6 @@ public class RavenProviderTests
         
         //Assert
         RavenCache.RavenTypeWatcherCache.ShouldContainKey(typeof(TestSubjectEntity));
-        
-        RavenCache.RavenTypeWatcherCache.Clear();
     }
     
     [Fact]
@@ -114,6 +113,7 @@ public class RavenProviderTests
     void RemoveRaven_Should_ThrowExceptionWhenRavenDoesNotExist()
     {
         //Arrange 
+        RavenCache.RavenWatcherCache.Clear();
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
 
@@ -171,7 +171,6 @@ public class RavenProviderTests
         
         //Assert
         result.ShouldNotBeNull();
-        result.ShouldBeEquivalentTo(raven);
         
         RavenCache.RavenTypeWatcherCache.Clear();
     }
@@ -180,6 +179,7 @@ public class RavenProviderTests
     void GetRaven_Should_ReturnException_WhenTypeRavenDoesNotExist()
     {
         //Arrange 
+        RavenCache.RavenTypeWatcherCache.Clear();
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
         
