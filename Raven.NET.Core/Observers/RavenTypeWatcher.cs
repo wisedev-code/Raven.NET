@@ -18,13 +18,13 @@ namespace Raven.NET.Core.Observers
         private readonly IRavenProvider _ravenProvider;
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
 
-        private RavenSettings _ravenSettings = new();
         private Func<RavenSubject,bool> _updateAction;
         private string _keyName;
         
         private ILogger<RavenTypeWatcher> _logger;
         private string RavenName;
         
+        internal RavenSettings _ravenSettings = new();
         internal List<RavenSubject> _watchedSubjects = new();
 
         public RavenTypeWatcher(IRavenProvider ravenProvider, IRavenSettingsProvider ravenSettingsProvider)
@@ -112,7 +112,9 @@ namespace Raven.NET.Core.Observers
         {
             _logger.LogDebug($"Stopping raven {name}");
             var raven = _ravenProvider.GetRaven(name) as RavenTypeWatcher;
-            raven._watchedSubjects.ForEach(x => x.Detach(this));
+            _watchedSubjects.ForEach(x => x.Detach(this));
+            _watchedSubjects.Clear();
+            _ravenProvider.UpdateSubjects(raven.RavenName, _watchedSubjects);
             _logger.LogInformation($"Detached {raven._watchedSubjects.Count} subjects from raven {RavenName}");
 
             if (raven._ravenSettings.AutoDestroy)
