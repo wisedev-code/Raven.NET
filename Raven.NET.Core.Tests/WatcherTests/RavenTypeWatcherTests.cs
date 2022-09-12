@@ -74,6 +74,7 @@ public class RavenTypeWatcherTests
         //Assert
         RavenCache.RavenTypeWatcherCache.ShouldContainKey(typeof(TestSubjectEntity));
         var settings = (sut as RavenTypeWatcher)?._ravenSettings;
+        settings.ShouldNotBeNull();
         settings.LogLevel.ShouldBe(LogLevel.Trace);
         settings.AutoDestroy.ShouldBe(true);
         settings.BackgroundWorker.ShouldBe(true);

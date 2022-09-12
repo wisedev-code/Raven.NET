@@ -138,7 +138,7 @@ public class RavenProviderTests
         
         //Assert
         result.ShouldNotBeNull();
-        result.ShouldBeEquivalentTo(raven);
+        result.ShouldBe(raven);
         
         RavenCache.RavenWatcherCache.Clear();
     }
