@@ -17,13 +17,11 @@ namespace Raven.NET.Core.Observers
     {
         private readonly IRavenProvider _ravenProvider;
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
-
-        private RavenSettings _ravenSettings = new();
         private Func<RavenSubject,bool> updateAction;
-        
         private ILogger<RavenWatcher> _logger;
         private string RavenName;
 
+        internal RavenSettings _ravenSettings = new();
         internal List<RavenSubject> _watchedSubjects = new();
 
 
@@ -104,6 +102,10 @@ namespace Raven.NET.Core.Observers
         public void UnWatch(string name, RavenSubject subject)
         {
             var raven = _ravenProvider.GetRaven(name) as RavenWatcher;
+            if (raven == null)
+            {
+                throw new RavenDoesNotExistsException(name);
+            }
             _watchedSubjects.Remove(subject);
             _ravenProvider.UpdateSubjects(name, _watchedSubjects);
             _logger.LogInformation($"Subject {subject.UniqueId} is no longer watched by {RavenName}");
