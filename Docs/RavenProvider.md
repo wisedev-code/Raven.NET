@@ -1,3 +1,7 @@
+- [RavenProvider](#ravenprovider)
+  - [Available methods:](#available-methods)
+  - [Usage example](#usage-example)
+
 ## RavenProvider
 
 This interface is mainly used to work over RavenWatcher and RavenTypeWatcher. Core of its functionality is locked in internal methods and used within methods of mentioned interfaces. There are as well some method that can be used for end user, and it will be described below. Methods mainly used for access to internal RavenCache.
@@ -23,7 +27,7 @@ Params:
 
 
 ****
-Usage example
+### Usage example
 
 ```c#
   _ravenTypeWatcher.Create<Car>("RavenTypeWatcherExample", nameof(Console.Car.Id), Callback);

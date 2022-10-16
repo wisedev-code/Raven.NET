@@ -1,3 +1,9 @@
+
+- [Raven Watcher](#raven-watcher)
+  - [Available methods:](#available-methods)
+  - [Usage example](#usage-example)
+
+
 ## Raven Watcher
 
 This is a basic interface that provides general purpose functionality of watching changes within objects. To access it, you need to inject IRavenWatcher interface. Below you can find a diagram that should briefly in simple words describe the way of working for this interface. 
@@ -29,7 +35,7 @@ Params:
 `public void Stop(string name)` - Method to stop raven, and that means unsubscribe to all subjects that are registered to it.
 
 ****
-Usage example
+### Usage example
 
 
 

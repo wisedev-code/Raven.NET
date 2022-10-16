@@ -1,3 +1,7 @@
+- [RavenTypeWatcher](#raventypewatcher)
+  - [Available methods:](#available-methods)
+  - [Usage example](#usage-example)
+
 ## RavenTypeWatcher
 
 This page will describe more advanced variant of RavenWatcher and this will be RavenTypeWatcher interface. As you may already know, this will be used to watch all objects of a given type. To use this interface, you need to inject IRavenTypeWatcher interface. Keep in mind that this may be more useful for specific cases, but as well is more resource consuming, because will add a thread that will be acting like watchdog. The diagram below may give you some sense about the way of working for this observer.
@@ -25,7 +29,7 @@ Params:
 - string name: name of watcher that will be stopped.
 
 ****
-Usage example
+### Usage example
 
 ```c#
 _ravenTypeWatcher.Create<Car>("RavenTypeWatcherExample", nameof(Console.Car.Id), Callback);
