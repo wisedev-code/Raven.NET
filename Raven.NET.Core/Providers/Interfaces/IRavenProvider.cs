@@ -17,7 +17,7 @@ namespace Raven.NET.Core.Providers.Interfaces
         /// <param name="ravenName"></param>
         /// <param name="raven"></param>
         /// <param name="ravenSubject"></param>
-        void AddRaven(string ravenName, IRaven raven, Type ravenSubject = default);
+        internal void AddRaven(string ravenName, IRaven raven, Type ravenSubject = default);
 
         /// <summary>
         /// Method to update raven internal collection of subject
@@ -31,26 +31,26 @@ namespace Raven.NET.Core.Providers.Interfaces
         /// Method removes raven from internal collection
         /// </summary>
         /// <param name="ravenName"></param>
-        void RemoveRaven(string ravenName);
+        public void RemoveRaven(string ravenName);
 
         /// <summary>
         /// Method to get raven from collection
         /// </summary>
         /// <param name="ravenName"></param>
         /// <param name="isTypedWatcher"></param>
-        IRaven GetRaven(string ravenName, Type type = default);
+        public IRaven GetRaven(string ravenName, Type type = default);
         
         /// <summary>
         /// Methods check if raven with this name is already specified
         /// </summary>
         /// <param name="ravenName"></param>
         /// <returns></returns>
-        bool RavenExist(string ravenName);
+        public bool RavenExist(string ravenName);
         
         /// <summary>
         /// This method can force raven update on registered subject
         /// </summary>
         /// <param name="subject"></param>
-        void UpdateRavens(RavenSubject subject);
+        internal void UpdateRavens(RavenSubject subject);
     }
 }

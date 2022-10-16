@@ -14,7 +14,7 @@ namespace Raven.NET.Core.Providers
     public class RavenProvider : IRavenProvider
     {
         /// <inheritdoc/>
-        public void AddRaven(string ravenName, IRaven raven, Type subjectType = default)
+        void IRavenProvider.AddRaven(string ravenName, IRaven raven, Type subjectType = default)
         {
             if (raven is IRavenTypeWatcher)
             {
@@ -83,7 +83,7 @@ namespace Raven.NET.Core.Providers
         public bool RavenExist(string ravenName) => RavenCache.RavenWatcherCache.ContainsKey(ravenName);
 
         /// <inheritdoc/>
-        public void UpdateRavens(RavenSubject subject)
+        void IRavenProvider.UpdateRavens(RavenSubject subject)
         {
             subject.Observers.ForEach(raven => raven.Update(subject));
         }
