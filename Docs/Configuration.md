@@ -18,7 +18,7 @@ There are 3 ways to have your ravens configured.
 
 **Example of configuration with appsettings.json**
 
-```json
+```python
 {
     "Logging": {
         "LogLevel": {
@@ -36,4 +36,5 @@ There are 3 ways to have your ravens configured.
         }
     }
 }
+
 ```

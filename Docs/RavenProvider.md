@@ -32,13 +32,13 @@ Params:
 ```c#
   _ravenTypeWatcher.Create<Car>("RavenTypeWatcherExample", nameof(Console.Car.Id), Callback);
 
-        var ravenCarWatcher = _ravenProvider.GetRaven("RavenTypeWatcherExample", typeof(Car)); // will return created raven
+  var ravenCarWatcher = _ravenProvider.GetRaven("RavenTypeWatcherExample", typeof(Car)); // will return created raven
 
-        var isCarRavenRegistered = _ravenProvider.RavenExist("RavenTypeWatcherExample"); // will return true
+  var isCarRavenRegistered = _ravenProvider.RavenExist("RavenTypeWatcherExample"); // will return true
         
-         _ravenProvider.RemoveRaven("RavenTypeWatcherExample");
+  _ravenProvider.RemoveRaven("RavenTypeWatcherExample");
          
-        var isCarRavenRegisteredAfter = _ravenProvider.RavenExist("RavenTypeWatcherExample"); // will return false
+  var isCarRavenRegisteredAfter = _ravenProvider.RavenExist("RavenTypeWatcherExample"); // will return false
 
 ```
 
