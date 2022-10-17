@@ -26,19 +26,19 @@ To use Raven.NET first step is to register necesary dependencies in service coll
 ```
 
 Then to make use of the most simple observer you should inject *IRavenWatcher* interface.
-With this you can create new watchers by using _Create_ method. It needs 2 parameters, when first is name of watcher (needs to be unique) and second is callback where we will get updates. Additionally it can have third parameter which is options, if not provided it will load options from appsettings and if those does not exist then it will use default configuration. Example of usage is shown below:
+With this you can create new watchers by using _Create_ method. It needs 2 parameters, when first is name of watcher (needs to be unique) and the second is the callback where we will get updates. Additionally it can have the third parameter which is options, if not provided it will load options from appsettings and if those do not exist then it will use the default configuration. Example of usage is shown below:
 
 ```
 var watcher1 = _ravenWatcher1.Create("Raven1", PhoneUpdated, (options) => { options.AutoDestroy = true; });
 ```
 
-After our watcher is created then we can tell him to watch certain object.
+After our watcher is created then we can tell him to watch a certain object.
 
 ```
 watcher1.Watch(testPhone2).Watch(testPhone3);
 ```
 
-With this code after we will make change to watched objects and notify observers about it we get message in our callback
+With this code after we will make changes to watched objects and notify observers about it, we get a message in our callback
 
 ```
 testPhone2.Price = 420;
@@ -50,9 +50,10 @@ And we get in our console logged:
 ![image](https://user-images.githubusercontent.com/111281468/187757222-ce7eebeb-6cd6-4a43-a5ce-2fb04d773ad3.png)
 
 #### Raven Type Watcher
-In addition we have implementation for watcher that allows to watch all objects of given type automaticly and checks for updates, this may be really usefull when you dont have strict control over objects in your system (you want to check for updates in lots of objects that you get form database, or load any other different way to your application). Implementation looks similar but has some core differences. And for this case you need to inject *IRavenTypeWatcher*
+In addition we have an implementation for watcher that allows you to watch all objects of a given type automatically and checks for updates, this may be really useful when you don't have strict control over objects in your system (you want to check for updates in lots of objects that you get form database, or load any other different way to your application). The implementation looks similar but has some core differences. And for this case, you need to inject *IRavenTypeWatcher*
 
-Creation looks similar, difference is that you need to provide type as generic parameter and additionally key that is unique for objects of this type.
+
+Creation looks similar, the difference is that you need to provide type as a generic parameter and an additionally key that is unique for objects of this type.
 
 ```
 _ravenTypeWatcher.Create<Car>("RavenTypeWatcherExample", nameof(Console.Car.Id), Callback);
@@ -70,15 +71,20 @@ That is basically it, and now when you will have new object with same id, it wil
 
 
 ## Docs
-<img src="https://cdn-icons-png.flaticon.com/512/5229/5229377.png" width="200" height="200" />
+Feel free to check out more detailed documentation, as good start we propose taking look on the introduction page
+
+[Introduction](/Docs/Introduction.md)
 
 
 ## Why the name raven?
 <img align="right" height="400" width="300" src="https://user-images.githubusercontent.com/105814382/169652167-82a3570b-0c55-4498-b313-1a66eeec893f.png"/>
-<p align="left" >Some time ago I watched a series in which a raven was an animal that was used for observation. It stared at the target 
+<p align="left" >Some time ago I watched a series in which a raven was an animal that was used for observation. It starred at the target 
 carefully as if it wanted to see all the details and potential clues. For those interested, there were also vampires and werewolves 
 in the series (probably many of you already guess what the series is about). I recently remembered this and read a bit about it, 
 even found out that ravens are considered animals that can be tracked by military and governmental organizations. Hence the idea to name 
-the library whose core will be based on the observer pattern as Raven. An additional advantage of this approach is easy understanding of the context and purpose, I would like this library to be able to describe what it does, and this approach is also evident in the interfaces and approach to using the framework. I believe that basing the elements of logic that is visible in the code on elements that are visible in the natural environment, the principles of operation should be easier to understand
+the library whose core will be based on the observer pattern as Raven. An additional advantage of this approach is an easy understanding of the context and purpose, I would like this library to be able to describe what it does, and this approach is also evident in the interfaces and approaches to using the framework. I believe that by basing the elements of logic that are visible in the code on elements that are visible in the natural environment, the principles of operation should be easier to understand
+
+
+
  </p>
 
