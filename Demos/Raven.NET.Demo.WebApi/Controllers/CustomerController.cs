@@ -1,75 +1,84 @@
 using Microsoft.AspNetCore.Mvc;
 using Raven.NET.Demo.WebApi.Model;
-using Raven.NET.Demo.WebApi.Repositories;
+using Raven.NET.Demo.WebApi.Repositories.Interfaces;
 using Raven.NET.Demo.WebApi.RequestModel;
 
-namespace Raven.NET.Demo.WebApi.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class CustomerController : ControllerBase
+namespace Raven.NET.Demo.WebApi.Controllers
 {
-    private readonly ICustomerRepository _customerRepository;
-
-    public CustomerController(ICustomerRepository customerRepository)
+//PS: This api is not an example of properly done SOLID Web Api, its simple showcase to see how Raven.NET components can be implemented
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CustomerController : ControllerBase
     {
-        _customerRepository = customerRepository;
-    }
+        private readonly ICustomerRepository _customerRepository;
+        private readonly ILogger<OrderController> _logger;
 
-    // GET: api/Customer
-    [HttpGet]
-    public IEnumerable<Customer> Get()
-    {
-        var result = _customerRepository.GetAll();
-        return result;
-    }
-
-    // GET: api/Customer/5
-    [HttpGet("{id}")]
-    public Customer Get(Guid id)
-    {
-        var result = _customerRepository.Get(id);
-        return result;
-    }
-
-    // POST: api/Customer
-    [HttpPost]
-    public IActionResult Post([FromBody] CustomerCreateRequest customerCreateRequest)
-    {
-        var customer = new Customer(customerCreateRequest.FirstName, customerCreateRequest.LastName);
-        _customerRepository.Save(customer);
-        return NoContent();
-    }
-
-    // PUT: api/Customer/5
-    [HttpPut("{id}")]
-    public IActionResult Put(Guid id, [FromBody] CustomerDiscountRequest customerDiscount)
-    {
-        var customer = _customerRepository.Get(id);
-        if (customer == null)
+        public CustomerController(ICustomerRepository customerRepository, ILogger<OrderController> logger)
         {
-            return NotFound();
+            _customerRepository = customerRepository;
+            _logger = logger;
         }
 
-        if (customerDiscount.CanHaveDiscount)
+        // GET: api/Customer
+        [HttpGet]
+        public IEnumerable<Customer> Get()
         {
-            customer.GiveDiscount(customerDiscount.Discount);
+            _logger.LogInformation("Get all customers invoked");
+            var result = _customerRepository.GetAll();
+            return result;
         }
-        else
+
+        // GET: api/Customer/8d35a21b-2b53-4407-8959-75910582af36
+        [HttpGet("{id}")]
+        public Customer Get(Guid id)
         {
-            customer.RemoveDiscount();
+            _logger.LogInformation($"Get customer {id} invoked");
+            var result = _customerRepository.Get(id);
+            return result;
         }
 
-        _customerRepository.Update(customer);
+        // POST: api/Customer
+        [HttpPost]
+        public IActionResult Post([FromBody] CustomerCreateRequest customerCreateRequest)
+        {
+            _logger.LogInformation(
+                $"Create customer {customerCreateRequest.FirstName} | {customerCreateRequest.LastName} invoked");
+            var customer = new Customer(customerCreateRequest.FirstName, customerCreateRequest.LastName);
+            _customerRepository.Save(customer);
+            return NoContent();
+        }
 
-        return Ok(customer);
-    }
+        // PUT: api/Customer/8d35a21b-2b53-4407-8959-75910582af36
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, [FromBody] CustomerDiscountRequest customerDiscount)
+        {
+            _logger.LogInformation($"Update customer {id} invoked");
+            var customer = _customerRepository.Get(id);
+            if (customer == null)
+            {
+                return NotFound();
+            }
 
-    // DELETE: api/Customer/5
-    [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
-    {
-        _customerRepository.Delete(id);
-        return NoContent();
+            if (customerDiscount.CanHaveDiscount)
+            {
+                customer.GiveDiscount(customerDiscount.Discount);
+            }
+            else
+            {
+                customer.RemoveDiscount();
+            }
+
+            _customerRepository.Update(customer);
+
+            return Ok(customer);
+        }
+
+        // DELETE: api/Customer/8d35a21b-2b53-4407-8959-75910582af36
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            _customerRepository.Delete(id);
+            return NoContent();
+        }
     }
 }

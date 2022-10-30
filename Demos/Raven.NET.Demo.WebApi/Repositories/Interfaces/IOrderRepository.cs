@@ -1,6 +1,6 @@
 using Raven.NET.Demo.WebApi.Model;
 
-namespace Raven.NET.Demo.WebApi.Repositories;
+namespace Raven.NET.Demo.WebApi.Repositories.Interfaces;
 
 public interface IOrderRepository
 {
