@@ -46,9 +46,11 @@ namespace Raven.NET.Demo.WebApi.Controllers
         {
             _logger.LogInformation($"Create order {value.Number} invoked");
             var customer = _customerRepository.Get(value.CustomerId);
-            Order order = new Order(Guid.NewGuid(), value.Number, customer, value.Product, value.Price);
+            Order order = new Order(value.Number, customer, value.Product, value.Price);
+            customer.OrderCount++;
 
             _orderRepository.Save(order);
+            _customerRepository.Update(customer);
             return NoContent();
         }
 

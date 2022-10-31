@@ -59,7 +59,7 @@ namespace Raven.NET.Demo.WebApi.Controllers
                 return NotFound();
             }
 
-            if (customerDiscount.CanHaveDiscount)
+            if (customerDiscount.CanHaveDiscount && customer.DiscountAvailable)
             {
                 customer.GiveDiscount(customerDiscount.Discount);
             }

@@ -1,14 +1,16 @@
 using System.Runtime.CompilerServices;
+using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Demo.WebApi.Model;
 
-public class Customer
+public class Customer : RavenSubject
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public bool DiscountAvailable { get; set; }
     public int DiscountPercentage { get; set; }
+    public int OrderCount { get; set; }
 
     public Customer(string firstName, string lastName)
     {
@@ -19,7 +21,6 @@ public class Customer
 
     public void GiveDiscount(int percentage)
     {
-        DiscountAvailable = true;
         DiscountPercentage = percentage;
     }
 

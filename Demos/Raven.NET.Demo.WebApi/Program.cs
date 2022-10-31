@@ -1,6 +1,8 @@
 using Raven.NET.Core.Configuration;
 using Raven.NET.Demo.WebApi.Repositories;
 using Raven.NET.Demo.WebApi.Repositories.Interfaces;
+using Raven.NET.Demo.WebApi.Services;
+using Raven.NET.Demo.WebApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ICustomerRepository, CustomerRepository>();
 builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
+builder.Services.AddSingleton<ICustomerUpdateService, CustomerUpdateService>();
+builder.Services.AddSingleton<IOrderUpdateService, OrderUpdateService>();
 builder.Services.ConfigureRaven(builder.Configuration);
 
 var app = builder.Build();
