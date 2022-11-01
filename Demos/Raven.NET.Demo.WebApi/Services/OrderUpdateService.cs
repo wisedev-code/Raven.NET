@@ -42,7 +42,7 @@ namespace Raven.NET.Demo.WebApi.Services
             
             if (order.Customer.DiscountAvailable && order.Customer.DiscountPercentage > 0)
             {
-                order.Price = order.Price * 100 / order.Customer.DiscountPercentage;
+                order.Price = order.Price * order.Customer.DiscountPercentage / 100;
                 order.TryNotify();
             }
         }

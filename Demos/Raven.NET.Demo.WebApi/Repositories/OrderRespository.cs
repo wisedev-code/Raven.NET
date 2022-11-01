@@ -1,11 +1,20 @@
 using Raven.NET.Demo.WebApi.Model;
 using Raven.NET.Demo.WebApi.Repositories.Interfaces;
+using Raven.NET.Demo.WebApi.Services.Interfaces;
 
 namespace Raven.NET.Demo.WebApi.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
         private readonly Dictionary<Guid, Order> _orders = new();
+        private readonly IOrderUpdateService _orderUpdateService;
+
+        public OrderRepository(IOrderUpdateService orderUpdateService)
+        {
+            _orderUpdateService = orderUpdateService;
+            _orderUpdateService.Initialize(this);
+        }
+
         public void Save(Order order)
         {
             _orders.Add(order.Id, order);

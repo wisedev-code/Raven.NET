@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Raven.NET.Demo.WebApi.Model;
 using Raven.NET.Demo.WebApi.Repositories.Interfaces;
 using Raven.NET.Demo.WebApi.RequestModel;
+using Raven.NET.Demo.WebApi.Services.Interfaces;
 
 namespace Raven.NET.Demo.WebApi.Controllers
 {
@@ -13,13 +14,15 @@ namespace Raven.NET.Demo.WebApi.Controllers
         private readonly ILogger<OrderController> _logger;
         private readonly IOrderRepository _orderRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IOrderUpdateService _orderUpdateService;
 
         public OrderController(ILogger<OrderController> logger, IOrderRepository orderRepository,
-            ICustomerRepository customerRepository)
+            ICustomerRepository customerRepository, IOrderUpdateService orderUpdateService)
         {
             _logger = logger;
             _orderRepository = orderRepository;
             _customerRepository = customerRepository;
+            _orderUpdateService = orderUpdateService;
         }
 
         // GET: api/Order
@@ -48,7 +51,11 @@ namespace Raven.NET.Demo.WebApi.Controllers
             var customer = _customerRepository.Get(value.CustomerId);
             Order order = new Order(value.Number, customer, value.Product, value.Price);
             customer.OrderCount++;
-
+            
+            //We can add additional logic there for example to keep track only on specified orders.
+            _orderUpdateService.Track(order);
+            _orderUpdateService.ProcessOrder(order);
+            
             _orderRepository.Save(order);
             _customerRepository.Update(customer);
             return NoContent();
