@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Raven.NET.Demo.WebApi.Model;
 using Raven.NET.Demo.WebApi.Repositories.Interfaces;
 using Raven.NET.Demo.WebApi.Services.Interfaces;
@@ -6,7 +7,7 @@ namespace Raven.NET.Demo.WebApi.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly Dictionary<Guid, Order> _orders = new();
+        private readonly ConcurrentDictionary<Guid, Order> _orders = new();
         private readonly IOrderUpdateService _orderUpdateService;
 
         public OrderRepository(IOrderUpdateService orderUpdateService)
@@ -17,7 +18,7 @@ namespace Raven.NET.Demo.WebApi.Repositories
 
         public void Save(Order order)
         {
-            _orders.Add(order.Id, order);
+            _orders.TryAdd(order.Id, order);
         }
 
         public void Update(Order order)
@@ -37,7 +38,7 @@ namespace Raven.NET.Demo.WebApi.Repositories
                 throw new KeyNotFoundException();
             }
 
-            _orders.Remove(id);
+            _orders.Remove(id, out _);
         }
 
         public Order Get(Guid id)

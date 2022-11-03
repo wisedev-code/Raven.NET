@@ -3,10 +3,12 @@ using Raven.NET.Demo.WebApi.Model;
 using Raven.NET.Demo.WebApi.Repositories.Interfaces;
 using Raven.NET.Demo.WebApi.RequestModel;
 using Raven.NET.Demo.WebApi.Services.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Raven.NET.Demo.WebApi.Controllers
 {
-//PS: This api is not an example of properly done SOLID Web Api, its simple showcase to see how Raven.NET components can be implemented
+    //PS: This api is not an example of properly done SOLID Web Api, its simple showcase to see how Raven.NET components can be implemented
+    [SwaggerTag("Controller to work with Orders (supported by RavenWatcher)")]
     [ApiController]
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
@@ -26,6 +28,7 @@ namespace Raven.NET.Demo.WebApi.Controllers
         }
 
         // GET: api/Order
+        [SwaggerOperation(Summary = "Get all available orders")]
         [HttpGet]
         public IEnumerable<Order> Get()
         {
@@ -35,6 +38,7 @@ namespace Raven.NET.Demo.WebApi.Controllers
         }
 
         // GET: api/Order/8d35a21b-2b53-4407-8959-75910582af36
+        [SwaggerOperation(Summary = "Get order by id")]
         [HttpGet("{id}")]
         public Order Get(Guid id)
         {
@@ -44,6 +48,7 @@ namespace Raven.NET.Demo.WebApi.Controllers
         }
 
         // POST: api/Order
+        [SwaggerOperation(Summary = "Add order to in memory database (this will also include RavenWatcher tracking of order")]
         [HttpPost]
         public IActionResult Post([FromBody] OrderCreateRequest value)
         {
@@ -51,17 +56,18 @@ namespace Raven.NET.Demo.WebApi.Controllers
             var customer = _customerRepository.Get(value.CustomerId);
             Order order = new Order(value.Number, customer, value.Product, value.Price);
             customer.OrderCount++;
+            _orderRepository.Save(order);
+            _customerRepository.Update(customer);
             
             //We can add additional logic there for example to keep track only on specified orders.
             _orderUpdateService.Track(order);
             _orderUpdateService.ProcessOrder(order);
             
-            _orderRepository.Save(order);
-            _customerRepository.Update(customer);
             return NoContent();
         }
 
         // PUT: api/Order/8d35a21b-2b53-4407-8959-75910582af36
+        [SwaggerOperation(Summary = "Update order by given id (you can update only price and product")]
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] OrderUpdateRequest value)
         {
@@ -76,6 +82,7 @@ namespace Raven.NET.Demo.WebApi.Controllers
         }
 
         // DELETE: api/Order/8d35a21b-2b53-4407-8959-75910582af36
+        [SwaggerOperation(Summary = "Delete order by given id")]
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {

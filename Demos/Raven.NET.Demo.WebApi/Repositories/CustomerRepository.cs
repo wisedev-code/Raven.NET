@@ -1,15 +1,13 @@
-using Raven.NET.Core.Observers.Interfaces;
-using Raven.NET.Core.Subjects;
+using System.Collections.Concurrent;
 using Raven.NET.Demo.WebApi.Model;
 using Raven.NET.Demo.WebApi.Repositories.Interfaces;
-using Raven.NET.Demo.WebApi.Services;
 using Raven.NET.Demo.WebApi.Services.Interfaces;
 
 namespace Raven.NET.Demo.WebApi.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
-        private readonly Dictionary<Guid, Customer> _customers = new();
+        private readonly ConcurrentDictionary<Guid, Customer> _customers = new();
         private readonly ICustomerUpdateService _customerUpdateService;
 
         public CustomerRepository(ICustomerUpdateService customerUpdateService)
@@ -20,7 +18,7 @@ namespace Raven.NET.Demo.WebApi.Repositories
 
         public void Save(Customer customer)
         {
-            _customers.Add(customer.Id, customer);
+            _customers.TryAdd(customer.Id, customer);
         }
 
         public void Update(Customer customer)
@@ -40,7 +38,7 @@ namespace Raven.NET.Demo.WebApi.Repositories
                 throw new KeyNotFoundException();
             }
 
-            _customers.Remove(id);
+            _customers.Remove(id, out _);
         }
 
         public Customer Get(Guid id)
