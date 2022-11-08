@@ -1,11 +1,11 @@
-using System.Collections.Concurrent;
 using AutoFixture;
 using Moq;
 using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Static;
+using Raven.NET.Core.Storage;
+using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Tests.SubjectTests;
 using Shouldly;
 using Xunit;
@@ -19,10 +19,13 @@ public class RavenProviderTests
     private readonly Mock<IRavenWatcher> _ravenWatcher;
     private readonly Mock<IRavenTypeWatcher> _ravenTypeWatcher;
     
+    private readonly IRavenStorage _ravenStorage;
+    
     public RavenProviderTests()
     {
         _ravenWatcher = new Mock<IRavenWatcher>();
         _ravenTypeWatcher = new Mock<IRavenTypeWatcher>();
+        _ravenStorage = RavenStorage.Instance;
         sut = new RavenProvider();
     }
 
@@ -37,9 +40,9 @@ public class RavenProviderTests
         sut.AddRaven(name, raven);
         
         //Assert
-        RavenCache.RavenWatcherCache.ShouldContainKey(name);
+        _ravenStorage.RavenWatcherStorage.ShouldContainKey(name);
         
-        RavenCache.RavenWatcherCache.Clear();
+        _ravenStorage.RavenWatcherStorage.Clear();
     }
     
     [Fact]
@@ -48,7 +51,7 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        RavenCache.RavenWatcherCache.TryAdd(name, raven);
+        _ravenStorage.RavenWatcherStorage.TryAdd(name, raven);
 
         //Act
         var ex = Record.Exception(() => sut.AddRaven(name, raven));
@@ -57,7 +60,7 @@ public class RavenProviderTests
         ex.ShouldNotBeNull();
         ex.ShouldBeOfType<RavenAlreadyExistsException>();
         
-        RavenCache.RavenWatcherCache.Clear();
+        _ravenStorage.RavenWatcherStorage.Clear();
 
     }
     
@@ -65,7 +68,7 @@ public class RavenProviderTests
     void AddRaven_Should_AddRavenToInternalRavenTypeCache_WhenTypeProvided()
     {
         //Arrange 
-        RavenCache.RavenTypeWatcherCache.Clear();
+        _ravenStorage.RavenTypeWatcherStorage.Clear();
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
 
@@ -73,7 +76,7 @@ public class RavenProviderTests
         sut.AddRaven(name, raven, typeof(TestSubjectEntity));
         
         //Assert
-        RavenCache.RavenTypeWatcherCache.ShouldContainKey(typeof(TestSubjectEntity));
+        _ravenStorage.RavenTypeWatcherStorage.ShouldContainKey(typeof(TestSubjectEntity));
     }
     
     [Fact]
@@ -82,7 +85,7 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
-        RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), raven);
+        _ravenStorage.RavenTypeWatcherStorage.TryAdd(typeof(TestSubjectEntity), raven);
 
         //Act
         var ex = Record.Exception(() => sut.AddRaven(name, raven, typeof(TestSubjectEntity)));
@@ -91,7 +94,7 @@ public class RavenProviderTests
         ex.ShouldNotBeNull();
         ex.ShouldBeOfType<RavenForTypeAlreadyExistsException>();
         
-        RavenCache.RavenTypeWatcherCache.Clear();
+        _ravenStorage.RavenTypeWatcherStorage.Clear();
     }
     
     [Fact]
@@ -100,20 +103,20 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        RavenCache.RavenWatcherCache.TryAdd(name, raven);
+        _ravenStorage.RavenWatcherStorage.TryAdd(name, raven);
 
         //Act
         sut.RemoveRaven(name);
         
         //Assert
-        RavenCache.RavenWatcherCache.ShouldBeEmpty();
+        _ravenStorage.RavenWatcherStorage.ShouldBeEmpty();
     }
     
     [Fact]
     void RemoveRaven_Should_ThrowExceptionWhenRavenDoesNotExist()
     {
         //Arrange 
-        RavenCache.RavenWatcherCache.Clear();
+        _ravenStorage.RavenWatcherStorage.Clear();
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
 
@@ -131,7 +134,7 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        RavenCache.RavenWatcherCache.TryAdd(name, raven);
+        _ravenStorage.RavenWatcherStorage.TryAdd(name, raven);
         
         //Act
         var result = sut.GetRaven(name);
@@ -140,7 +143,7 @@ public class RavenProviderTests
         result.ShouldNotBeNull();
         result.ShouldBe(raven);
         
-        RavenCache.RavenWatcherCache.Clear();
+        _ravenStorage.RavenWatcherStorage.Clear();
     }
     
     [Fact]
@@ -164,7 +167,7 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
-        RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), raven);
+        _ravenStorage.RavenTypeWatcherStorage.TryAdd(typeof(TestSubjectEntity), raven);
         
         //Act
         var result = sut.GetRaven(name, typeof(TestSubjectEntity));
@@ -172,14 +175,14 @@ public class RavenProviderTests
         //Assert
         result.ShouldNotBeNull();
         
-        RavenCache.RavenTypeWatcherCache.Clear();
+        _ravenStorage.RavenTypeWatcherStorage.Clear();
     }
     
     [Fact]
     void GetRaven_Should_ReturnException_WhenTypeRavenDoesNotExist()
     {
         //Arrange 
-        RavenCache.RavenTypeWatcherCache.Clear();
+        _ravenStorage.RavenTypeWatcherStorage.Clear();
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
         
@@ -198,7 +201,7 @@ public class RavenProviderTests
         var fixture = new Fixture();
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        RavenCache.RavenWatcherCache.TryAdd(name, raven);
+        _ravenStorage.RavenWatcherStorage.TryAdd(name, raven);
         var mockedSubject = fixture.Create<TestSubjectEntity>();
         mockedSubject.Attach(raven);
         
@@ -208,6 +211,6 @@ public class RavenProviderTests
         //Assert
         _ravenWatcher.Verify(x => x.Update(mockedSubject));
         
-        RavenCache.RavenWatcherCache.Clear();
+        _ravenStorage.RavenWatcherStorage.Clear();
     }
 }

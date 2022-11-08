@@ -5,7 +5,8 @@ using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Static;
+using Raven.NET.Core.Storage;
+using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Providers
@@ -13,19 +14,21 @@ namespace Raven.NET.Core.Providers
     /// <inheritdoc/>
     public class RavenProvider : IRavenProvider
     {
+        private IRavenStorage _ravenStorage = RavenStorage.Instance;
+
         /// <inheritdoc/>
         void IRavenProvider.AddRaven(string ravenName, IRaven raven, Type subjectType = default)
         {
             if (raven is IRavenTypeWatcher)
             {
-                var existWithType = !RavenCache.RavenTypeWatcherCache.TryAdd(subjectType, (IRavenTypeWatcher)raven);
+                var existWithType = !_ravenStorage.RavenTypeWatcherStorage.TryAdd(subjectType, (IRavenTypeWatcher)raven);
                 if (existWithType)
                 {
                     throw new RavenForTypeAlreadyExistsException(subjectType);
                 }
             }
 
-            var existWithName = !RavenCache.RavenWatcherCache.TryAdd(ravenName, raven);
+            var existWithName = !_ravenStorage.RavenWatcherStorage.TryAdd(ravenName, raven);
             if (existWithName)
             {
                 throw new RavenAlreadyExistsException(ravenName);
@@ -36,20 +39,20 @@ namespace Raven.NET.Core.Providers
         {
             if (type != default)
             {
-                var ravenTypeWatcher = RavenCache.RavenTypeWatcherCache[type] as RavenTypeWatcher;
+                var ravenTypeWatcher = _ravenStorage.RavenTypeWatcherStorage[type] as RavenTypeWatcher;
                 ravenTypeWatcher._watchedSubjects = subjects.ToList();
-                RavenCache.RavenTypeWatcherCache[type] = ravenTypeWatcher;
+                _ravenStorage.RavenTypeWatcherStorage[type] = ravenTypeWatcher;
             }
 
-            var ravenWatcher = RavenCache.RavenWatcherCache[ravenName] as RavenWatcher;
+            var ravenWatcher = _ravenStorage.RavenWatcherStorage[ravenName] as RavenWatcher;
             ravenWatcher._watchedSubjects = subjects.ToList();
-            RavenCache.RavenWatcherCache[ravenName] = ravenWatcher;
+            _ravenStorage.RavenWatcherStorage[ravenName] = ravenWatcher;
         }
 
         /// <inheritdoc/>
         public void RemoveRaven(string ravenName)
         {
-            var notExist = !RavenCache.RavenWatcherCache.TryRemove(ravenName, out _);
+            var notExist = !_ravenStorage.RavenWatcherStorage.TryRemove(ravenName, out _);
             if (notExist)
             {
                 throw new RavenDoesNotExistsException(ravenName);
@@ -61,7 +64,7 @@ namespace Raven.NET.Core.Providers
         {
             if (type != default)
             {
-                var typeExists = RavenCache.RavenTypeWatcherCache.TryGetValue(type, out var typeWatcher);
+                var typeExists = _ravenStorage.RavenTypeWatcherStorage.TryGetValue(type, out var typeWatcher);
                 if (!typeExists)
                 {
                     throw new RavenDoesNotExistsException(ravenName);
@@ -70,7 +73,7 @@ namespace Raven.NET.Core.Providers
                 return typeWatcher;
             }
 
-            var exists = RavenCache.RavenWatcherCache.TryGetValue(ravenName, out var watcher);
+            var exists = _ravenStorage.RavenWatcherStorage.TryGetValue(ravenName, out var watcher);
             if (!exists)
             {
                 throw new RavenDoesNotExistsException(ravenName);
@@ -80,7 +83,7 @@ namespace Raven.NET.Core.Providers
         }
 
         /// <inheritdoc/>
-        public bool RavenExist(string ravenName) => RavenCache.RavenWatcherCache.ContainsKey(ravenName);
+        public bool RavenExist(string ravenName) => _ravenStorage.RavenWatcherStorage.ContainsKey(ravenName);
 
         /// <inheritdoc/>
         void IRavenProvider.UpdateRavens(RavenSubject subject)

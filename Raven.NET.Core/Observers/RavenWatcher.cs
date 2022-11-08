@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Microsoft.Extensions.Logging;
 using Raven.NET.Core.Configuration;
 using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Static;
+using Raven.NET.Core.Storage;
+using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Observers
@@ -17,6 +17,8 @@ namespace Raven.NET.Core.Observers
     {
         private readonly IRavenProvider _ravenProvider;
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
+        private readonly IRavenStorage _ravenStorage = RavenStorage.Instance;
+        
         private Func<RavenSubject,bool> updateAction;
         private ILogger<RavenWatcher> _logger;
         private string RavenName;
@@ -136,7 +138,7 @@ namespace Raven.NET.Core.Observers
             
             if (!ravenWatcher._watchedSubjects.Any())
             {
-                RavenCache.RavenWatcherCache.Remove(ravenName, out _);
+                _ravenStorage.RavenWatcherStorage.Remove(ravenName, out _);
                 _logger.LogInformation($"Removed raven {RavenName}");
                 return;
             }
