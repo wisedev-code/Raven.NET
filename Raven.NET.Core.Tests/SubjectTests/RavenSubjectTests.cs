@@ -22,7 +22,7 @@ public class RavenSubjectTests
     {
         _ravenWatcher = new Mock<IRavenWatcher>();
         _ravenTypeWatcher = new Mock<IRavenTypeWatcher>();
-        _ravenStorage = RavenStorage.Instance;
+        _ravenStorage = RavenStorage.TestInstance;
     }
     
     [Fact]
@@ -37,10 +37,8 @@ public class RavenSubjectTests
         //Assert
         result.UniqueId.ShouldNotBe(Guid.Empty);
         result.Observers.ShouldContain(_ravenWatcher.Object);
-        _ravenStorage.SubjectStorage.ShouldNotBeEmpty();
-        _ravenStorage.SubjectStorage.ShouldContainKey(result.UniqueId);
-        
-        _ravenStorage.SubjectStorage.Clear();
+
+        _ravenStorage.SubjectExists(result.UniqueId).ShouldBeTrue();
     }
     
     [Fact]
@@ -49,11 +47,12 @@ public class RavenSubjectTests
         //Arrange
         var fixture = new Fixture();
         var mockedSubject = fixture.Build<TestSubjectEntity>().Create();
-        _ravenStorage.RavenTypeWatcherStorage.TryAdd(typeof(TestSubjectEntity), _ravenTypeWatcher.Object);
+        _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), _ravenTypeWatcher.Object);
         _ravenTypeWatcher.Setup(x => x.AttachSubject(It.IsAny<RavenSubject>())).Callback(() =>
         {
-            _ravenStorage.SubjectTypeStorage.TryAdd(typeof(TestSubjectEntity), new ConcurrentDictionary<string, string>());
-            _ravenStorage.SubjectTypeStorage[typeof(TestSubjectEntity)].TryAdd(mockedSubject.UniqueId.ToString(), mockedSubject.CreateCacheValue());
+            _ravenStorage.SubjectTypeTryAdd(typeof(TestSubjectEntity), new ConcurrentDictionary<string, string>());
+            _ravenStorage.SubjectTypeValueTryAdd(typeof(TestSubjectEntity), mockedSubject.UniqueId.ToString(),
+                mockedSubject.CreateCacheValue());
             mockedSubject.Observers.Add(_ravenTypeWatcher.Object);
         });
         
@@ -65,11 +64,7 @@ public class RavenSubjectTests
         
         //Assert
         result.UniqueId.ShouldNotBe(Guid.Empty);
-        _ravenStorage.SubjectTypeStorage.ShouldNotBeEmpty();
-        _ravenStorage.SubjectTypeStorage.ShouldContainKey(typeof(TestSubjectEntity));
-        
-        _ravenStorage.SubjectTypeStorage.Clear();
-        _ravenStorage.RavenTypeWatcherStorage.Clear();
+        _ravenStorage.SubjectTypeExists(typeof(TestSubjectEntity));
     }
 
     [Fact]
@@ -78,32 +73,28 @@ public class RavenSubjectTests
         //Arrange
         var fixture = new Fixture();
         var mockedSubject = fixture.Build<TestSubjectEntity>().Create();
-        _ravenStorage.SubjectStorage.TryAdd(mockedSubject.UniqueId, mockedSubject.CreateCacheValue());
+        _ravenStorage.SubjectTryAdd(mockedSubject.UniqueId, mockedSubject.CreateCacheValue());
         mockedSubject.Attach(_ravenWatcher.Object);
         
         //Act
         mockedSubject.Detach(_ravenWatcher.Object);
         mockedSubject.Observers.ShouldBeEmpty();
-        
-        _ravenStorage.SubjectStorage.Clear();
     }
     
     [Fact]
     void Notify_Should_CallUpdateOnWatchers()
     {
         //Arrange
-        _ravenStorage.SubjectStorage.Clear();
-        _ravenStorage.RavenTypeWatcherStorage.Clear();
         var fixture = new Fixture();
         var mockedSubject = fixture.Create<TestSubjectEntity>();
-        _ravenStorage.SubjectStorage.TryAdd(mockedSubject.UniqueId, mockedSubject.CreateCacheValue());
+        _ravenStorage.SubjectTryAdd(mockedSubject.UniqueId, mockedSubject.CreateCacheValue());
         mockedSubject.Attach(_ravenWatcher.Object);
         
         //Act
         mockedSubject.Value = "Value";
         mockedSubject.Changed = true;
         mockedSubject.TryNotify();
-        
+
         mockedSubject.Observers.ShouldContain(_ravenWatcher.Object);
         _ravenWatcher.Verify(x => x.Update(mockedSubject));
     }

@@ -67,7 +67,7 @@ namespace Raven.NET.Core.Observers
             
             _updateAction = callback;
             _ravenProvider.AddRaven(name,this, typeof(T));
-            _ravenStorage.SubjectTypeStorage.TryAdd(typeof(T), new ConcurrentDictionary<string, string>());
+            _ravenStorage.SubjectTypeTryAdd(typeof(T), new ConcurrentDictionary<string, string>());
             _keyName = keyName;
 
             var ravenSettings = _ravenSettingsProvider.GetRaven(name);
@@ -168,7 +168,7 @@ namespace Raven.NET.Core.Observers
             
             if (!ravenWatcher._watchedSubjects.Any())
             {
-                _ravenStorage.RavenWatcherStorage.Remove(ravenName, out _);
+                _ravenStorage.RavenWatcherRemove(ravenName);
                 _logger.LogInformation($"Removed raven {RavenName}");
                 return;
             }

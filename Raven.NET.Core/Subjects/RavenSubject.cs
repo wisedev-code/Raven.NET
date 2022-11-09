@@ -22,16 +22,16 @@ namespace Raven.NET.Core.Subjects
         {
             UniqueId = Guid.NewGuid();
             var type = GetType();
-            if (_ravenStorage.RavenTypeWatcherStorage.ContainsKey(type))
+            if (_ravenStorage.RavenTypeWatcherExists(type))
             {
-                _ravenStorage.RavenTypeWatcherStorage[type].AttachSubject(this);
+                _ravenStorage.RavenTypeWatcherGet(type).AttachSubject(this);
             }
         }
 
         internal void Attach(IRaven ravenWatcher)
         {
             var cacheKey = this.CreateCacheValue();
-            _ravenStorage.SubjectStorage.TryAdd(UniqueId, this.CreateCacheValue());
+            _ravenStorage.SubjectTryAdd(UniqueId, this.CreateCacheValue());
             Observers.Add(ravenWatcher);
         }
 
@@ -40,14 +40,14 @@ namespace Raven.NET.Core.Subjects
             Observers.Remove(ravenWatcher);
             if (!Observers.Any())
             {
-                _ravenStorage.SubjectStorage.Remove(UniqueId, out var _);
+                _ravenStorage.SubjectRemove(UniqueId);
             }
         }
         
         public void TryNotify()
         {
             var type = GetType();
-            var typeWatcherExists = _ravenStorage.RavenTypeWatcherStorage.ContainsKey(type);
+            var typeWatcherExists = _ravenStorage.RavenTypeWatcherExists(type);
 
             if (!typeWatcherExists)
             {
@@ -60,12 +60,12 @@ namespace Raven.NET.Core.Subjects
 
         private void SingleWatcherProcessing()
         {
-            if (_ravenStorage.SubjectStorage.ContainsKey(UniqueId))
+            if (_ravenStorage.SubjectExists(UniqueId))
             {
                 var valueToCache = this.CreateCacheValue();
-                if (_ravenStorage.SubjectStorage[UniqueId] != valueToCache)
+
+                if (_ravenStorage.SubjectTryUpdate(UniqueId, valueToCache))
                 {
-                    _ravenStorage.SubjectStorage[UniqueId] = valueToCache;
                     Observers.ForEach(raven => raven.Update(this));
                 }
             }
@@ -75,21 +75,23 @@ namespace Raven.NET.Core.Subjects
         {
             var type = GetType();
 
-            var key = type.GetProperty(_ravenStorage.RavenTypeWatcherStorage[type].KeyName).GetValue(this).ToString();
-            var valueToStoreInCache = this.CreateCacheValue();
-            
-            if (!_ravenStorage.SubjectTypeStorage[type].TryGetValue(key, out string cachedValue))
+            var key = type.GetProperty(_ravenStorage.RavenTypeWatcherGet(type).KeyName).GetValue(this).ToString();
+            var valueToStore = this.CreateCacheValue();
+
+            if (!_ravenStorage.SubjectTypeValueExists(type, key))
             {
-                _ravenStorage.SubjectTypeStorage[type].TryAdd(key, valueToStoreInCache);
-                Observers.Add(_ravenStorage.RavenTypeWatcherStorage[type]);
-                return;
+                _ravenStorage.SubjectTypeValueTryAdd(type, key, valueToStore);
+                Observers.Add(_ravenStorage.RavenTypeWatcherGet(type));
+                return;;
             }
 
-            if (cachedValue != valueToStoreInCache)
+            var existingValue = _ravenStorage.SubjectTypeValueGet(type, key);
+
+            if (existingValue != valueToStore)
             {
-                Observers.Add(_ravenStorage.RavenTypeWatcherStorage[type]);
-                _ravenStorage.RavenTypeWatcherStorage[type].UpdateNewestSubject(key, this);
-                _ravenStorage.SubjectTypeStorage[type][key] = valueToStoreInCache;
+                Observers.Add(_ravenStorage.RavenTypeWatcherGet(type));
+                _ravenStorage.RavenTypeWatcherGet(type).UpdateNewestSubject(key, this);
+                _ravenStorage.SubjectTypeValueTryUpdate(type, key, valueToStore);
                 Observers.ForEach(raven => raven.Update(this));
             }
         }

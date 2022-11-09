@@ -138,7 +138,7 @@ namespace Raven.NET.Core.Observers
             
             if (!ravenWatcher._watchedSubjects.Any())
             {
-                _ravenStorage.RavenWatcherStorage.Remove(ravenName, out _);
+                _ravenStorage.RavenWatcherRemove(ravenName);
                 _logger.LogInformation($"Removed raven {RavenName}");
                 return;
             }
