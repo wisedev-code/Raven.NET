@@ -6,7 +6,6 @@ namespace Raven.NET.Core.Storage.Interfaces
 {
     public interface IRavenStorage
     {
-        public RavenStorage GetInstance();
         public bool SubjectExists(Guid key);
         public string SubjectGet(Guid key);
         public bool SubjectTryAdd(Guid key, string value);

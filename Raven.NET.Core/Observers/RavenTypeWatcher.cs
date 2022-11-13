@@ -18,8 +18,8 @@ namespace Raven.NET.Core.Observers
     {
         private readonly IRavenProvider _ravenProvider;
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
-
-        private readonly IRavenStorage _ravenStorage;
+        
+        private readonly IRavenStorage _ravenStorage = RavenStorage.Instance;
 
         private Func<RavenSubject,bool> _updateAction;
         private string _keyName;
@@ -32,13 +32,11 @@ namespace Raven.NET.Core.Observers
 
         public RavenTypeWatcher(
             IRavenProvider ravenProvider,
-            IRavenSettingsProvider ravenSettingsProvider,
-            IRavenStorage ravenStorage)
+            IRavenSettingsProvider ravenSettingsProvider)
         {
             _ravenProvider = ravenProvider;
             _ravenSettingsProvider = ravenSettingsProvider;
-            _ravenStorage = ravenStorage;
-
+            
             _ravenSettings.BackgroundWorker = true;
             _ravenSettings.BackgroundWorkerInterval = 1.0f;
         }

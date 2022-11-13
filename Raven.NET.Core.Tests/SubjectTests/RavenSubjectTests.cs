@@ -22,7 +22,7 @@ public class RavenSubjectTests
     {
         _ravenWatcher = new Mock<IRavenWatcher>();
         _ravenTypeWatcher = new Mock<IRavenTypeWatcher>();
-        _ravenStorage = new RavenStorage().GetInstance();
+        _ravenStorage = RavenStorage.TestInstance;
     }
     
     [Fact]
