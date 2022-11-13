@@ -8,10 +8,10 @@ namespace Raven.NET.Core.Storage
 {
     public class RavenStorage : IRavenStorage
     {
-        public ConcurrentDictionary<Guid, string> SubjectStorage { get; } = new();
-        public ConcurrentDictionary<Type, ConcurrentDictionary<string, string>> SubjectTypeStorage { get; } = new();
-        public ConcurrentDictionary<string, IRaven> RavenWatcherStorage { get; } = new();
-        public ConcurrentDictionary<Type, IRavenTypeWatcher> RavenTypeWatcherStorage { get; } = new();
+        private ConcurrentDictionary<Guid, string> SubjectStorage { get; } = new();
+        private ConcurrentDictionary<Type, ConcurrentDictionary<string, string>> SubjectTypeStorage { get; } = new();
+        private ConcurrentDictionary<string, IRaven> RavenWatcherStorage { get; } = new();
+        private ConcurrentDictionary<Type, IRavenTypeWatcher> RavenTypeWatcherStorage { get; } = new();
 
         private static RavenStorage _instance;
         private static readonly object Lock = new();
