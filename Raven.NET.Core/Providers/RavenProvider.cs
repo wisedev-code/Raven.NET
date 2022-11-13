@@ -14,7 +14,12 @@ namespace Raven.NET.Core.Providers
     /// <inheritdoc/>
     public class RavenProvider : IRavenProvider
     {
-        private IRavenStorage _ravenStorage = RavenStorage.Instance;
+        private readonly IRavenStorage _ravenStorage;
+
+        public RavenProvider(IRavenStorage ravenStorage)
+        {
+            _ravenStorage = ravenStorage;
+        }
 
         /// <inheritdoc/>
         void IRavenProvider.AddRaven(string ravenName, IRaven raven, Type subjectType = default)

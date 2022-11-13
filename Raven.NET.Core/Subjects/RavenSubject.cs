@@ -13,7 +13,7 @@ namespace Raven.NET.Core.Subjects
     /// </summary>
     public class RavenSubject
     {
-        private readonly IRavenStorage _ravenStorage = RavenStorage.Instance;
+        private readonly IRavenStorage _ravenStorage = new RavenStorage().GetInstance();
         
         internal List<IRaven> Observers = new();
         internal Guid UniqueId { get; set; }
