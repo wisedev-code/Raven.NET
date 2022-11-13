@@ -23,10 +23,10 @@ public class RavenProviderTests
     
     public RavenProviderTests()
     {
-        _ravenStorage = RavenStorage.TestInstance;
+        _ravenStorage = new RavenStorage().GetInstance();
         _ravenWatcher = new Mock<IRavenWatcher>();
         _ravenTypeWatcher = new Mock<IRavenTypeWatcher>();
-        sut = new RavenProvider();
+        sut = new RavenProvider(_ravenStorage);
     }
 
     [Fact]

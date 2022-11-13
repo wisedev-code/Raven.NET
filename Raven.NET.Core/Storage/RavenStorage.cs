@@ -13,28 +13,36 @@ namespace Raven.NET.Core.Storage
         public ConcurrentDictionary<string, IRaven> RavenWatcherStorage { get; } = new();
         public ConcurrentDictionary<Type, IRavenTypeWatcher> RavenTypeWatcherStorage { get; } = new();
 
-        private static RavenStorage _instance;
-        private static readonly object Lock = new();
-        
-        public static RavenStorage Instance
+        // private static RavenStorage _instance;
+        // private static readonly object Lock = new();
+        //
+        // public static RavenStorage Instance
+        // {
+        //     get
+        //     {
+        //         lock (Lock)
+        //         {
+        //             _instance ??= new RavenStorage();
+        //         }
+        //         return _instance;
+        //     }
+        // }
+        //
+        // public static RavenStorage TestInstance
+        // {
+        //     get
+        //     {
+        //         _instance = new RavenStorage();
+        //         return _instance;
+        //     }
+        // }
+
+        private RavenStorage _instance;
+
+        public RavenStorage GetInstance()
         {
-            get
-            {
-                lock (Lock)
-                {
-                    _instance ??= new RavenStorage();
-                }
-                return _instance;
-            }
-        }
-        
-        public static RavenStorage TestInstance
-        {
-            get
-            {
-                _instance = new RavenStorage();
-                return _instance;
-            }
+            _instance ??= new RavenStorage();
+            return _instance;
         }
 
         public bool SubjectExists(Guid key) => SubjectStorage.ContainsKey(key);

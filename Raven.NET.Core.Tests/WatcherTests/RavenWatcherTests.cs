@@ -29,8 +29,9 @@ public class RavenWatcherTests
         _fixture = new Fixture();
         _ravenProvider = new Mock<IRavenProvider>();
         _ravenSettingsProvider = new Mock<IRavenSettingsProvider>();
-        sut = new RavenWatcher(_ravenProvider.Object, _ravenSettingsProvider.Object);
-        _ravenStorage = RavenStorage.Instance;
+        _ravenStorage = new RavenStorage().GetInstance();
+        sut = new RavenWatcher(_ravenProvider.Object, _ravenSettingsProvider.Object,_ravenStorage);
+        
     }
 
     [Fact]
