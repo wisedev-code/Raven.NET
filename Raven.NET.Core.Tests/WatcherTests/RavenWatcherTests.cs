@@ -6,7 +6,8 @@ using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Static;
+using Raven.NET.Core.Storage;
+using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Subjects;
 using Raven.NET.Core.Tests.SubjectTests;
 using Shouldly;
@@ -19,6 +20,7 @@ public class RavenWatcherTests
 {
     private Fixture _fixture;
     private readonly IRavenWatcher sut;
+    private readonly IRavenStorage _ravenStorage;
     private readonly Mock<IRavenProvider> _ravenProvider;
     private readonly Mock<IRavenSettingsProvider> _ravenSettingsProvider;
 
@@ -28,6 +30,7 @@ public class RavenWatcherTests
         _ravenProvider = new Mock<IRavenProvider>();
         _ravenSettingsProvider = new Mock<IRavenSettingsProvider>();
         sut = new RavenWatcher(_ravenProvider.Object, _ravenSettingsProvider.Object);
+        _ravenStorage = RavenStorage.Instance;
     }
 
     [Fact]
@@ -37,14 +40,14 @@ public class RavenWatcherTests
         var watcherName = "TestWatcher";
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenWatcher>(), null)).Callback(() =>
         {
-            RavenCache.RavenWatcherCache.TryAdd(watcherName, sut);
+            _ravenStorage.RavenWatcherTryAdd(watcherName, sut);
         });
 
         //Act
         sut.Create(watcherName, subject => true);
 
         //Assert
-        RavenCache.RavenWatcherCache.ShouldContainKey(watcherName);
+        _ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
         var settings = (sut as RavenWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Warning);
         settings.AutoDestroy.ShouldBe(false);
@@ -63,7 +66,7 @@ public class RavenWatcherTests
 
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenWatcher>(), null)).Callback(() =>
         {
-            RavenCache.RavenWatcherCache.TryAdd(watcherName, sut);
+            _ravenStorage.RavenWatcherTryAdd(watcherName, sut);
         });
 
         _ravenSettingsProvider.Setup(x => x.GetRaven(watcherName)).Returns(settingsMock);
@@ -72,7 +75,7 @@ public class RavenWatcherTests
         sut.Create(watcherName, subject => true);
 
         //Assert
-        RavenCache.RavenWatcherCache.ShouldContainKey(watcherName);
+        _ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
         var settings = (sut as RavenWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Trace);
         settings.AutoDestroy.ShouldBe(true);
@@ -91,7 +94,7 @@ public class RavenWatcherTests
 
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenWatcher>(), null)).Callback(() =>
         {
-            RavenCache.RavenWatcherCache.TryAdd(watcherName, sut);
+            _ravenStorage.RavenWatcherTryAdd(watcherName, sut);
         });
 
         _ravenSettingsProvider.Setup(x => x.GetRaven(watcherName)).Returns(settingsMock);
@@ -104,7 +107,7 @@ public class RavenWatcherTests
         });
 
         //Assert
-        RavenCache.RavenWatcherCache.ShouldContainKey(watcherName);
+        _ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
         var settings = (sut as RavenWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Critical);
         settings.AutoDestroy.ShouldBe(false);

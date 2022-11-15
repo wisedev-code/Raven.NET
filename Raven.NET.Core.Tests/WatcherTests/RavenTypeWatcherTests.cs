@@ -5,7 +5,8 @@ using Raven.NET.Core.Configuration;
 using Raven.NET.Core.Observers;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Static;
+using Raven.NET.Core.Storage;
+using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Subjects;
 using Raven.NET.Core.Tests.SubjectTests;
 using Shouldly;
@@ -20,6 +21,7 @@ public class RavenTypeWatcherTests
     private readonly IRavenTypeWatcher sut;
     private readonly Mock<IRavenProvider> _ravenProvider;
     private readonly Mock<IRavenSettingsProvider> _ravenSettingsProvider;
+    private readonly IRavenStorage _ravenStorage;
     
     public RavenTypeWatcherTests()
     {
@@ -27,6 +29,7 @@ public class RavenTypeWatcherTests
         _ravenProvider = new Mock<IRavenProvider>();
         _ravenSettingsProvider = new Mock<IRavenSettingsProvider>();
         sut = new RavenTypeWatcher(_ravenProvider.Object, _ravenSettingsProvider.Object);
+        _ravenStorage = RavenStorage.Instance;
     }
     
     [Fact]
@@ -36,14 +39,14 @@ public class RavenTypeWatcherTests
         var watcherName = "TestWatcher";
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenTypeWatcher>(), typeof(TestSubjectEntity))).Callback(() =>
         {
-            RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), sut);
+            _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), sut);
         });
         
         //Act
         sut.Create<TestSubjectEntity>(watcherName, nameof(TestSubjectEntity.Value),subject => true);
         
         //Assert
-        RavenCache.RavenTypeWatcherCache.ShouldContainKey(typeof(TestSubjectEntity));
+        _ravenStorage.RavenTypeWatcherExists(typeof(TestSubjectEntity)).ShouldBeTrue();
         var settings = (sut as RavenTypeWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Warning);
         settings.AutoDestroy.ShouldBe(false);
@@ -63,7 +66,7 @@ public class RavenTypeWatcherTests
         
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenTypeWatcher>(), typeof(TestSubjectEntity))).Callback(() =>
         {
-            RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), sut);
+            _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), sut);
         });
 
         _ravenSettingsProvider.Setup(x => x.GetRaven(watcherName)).Returns(settingsMock);
@@ -72,7 +75,7 @@ public class RavenTypeWatcherTests
         sut.Create<TestSubjectEntity>(watcherName, nameof(TestSubjectEntity.Value),subject => true);
         
         //Assert
-        RavenCache.RavenTypeWatcherCache.ShouldContainKey(typeof(TestSubjectEntity));
+        _ravenStorage.RavenTypeWatcherExists(typeof(TestSubjectEntity)).ShouldBeTrue();
         var settings = (sut as RavenTypeWatcher)?._ravenSettings;
         settings.ShouldNotBeNull();
         settings.LogLevel.ShouldBe(LogLevel.Trace);
@@ -93,7 +96,7 @@ public class RavenTypeWatcherTests
         
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenTypeWatcher>(), typeof(TestSubjectEntity))).Callback(() =>
         {
-            RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), sut);
+            _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), sut);
         });
 
         _ravenSettingsProvider.Setup(x => x.GetRaven(watcherName)).Returns(settingsMock);
@@ -106,7 +109,7 @@ public class RavenTypeWatcherTests
         });
         
         //Assert
-        RavenCache.RavenTypeWatcherCache.ShouldContainKey(typeof(TestSubjectEntity));
+        _ravenStorage.RavenTypeWatcherExists(typeof(TestSubjectEntity)).ShouldBeTrue();
         var settings = (sut as RavenTypeWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Critical);
         settings.AutoDestroy.ShouldBe(false);
@@ -122,7 +125,7 @@ public class RavenTypeWatcherTests
         var watcherName = "TestSubject";
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenTypeWatcher>(), typeof(TestSubjectEntity))).Callback(() =>
         {
-            RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), sut);
+            _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), sut);
         });
         
         //Act
@@ -146,7 +149,7 @@ public class RavenTypeWatcherTests
         var watcherName = "TestSubject";
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenTypeWatcher>(), typeof(TestSubjectEntity))).Callback(() =>
         {
-            RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), sut);
+            _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), sut);
         });
         
         sut.Create<TestSubjectEntity>(watcherName, nameof(TestSubjectEntity.Value),subject => true);
@@ -169,7 +172,7 @@ public class RavenTypeWatcherTests
         var watcherName = "TestSubject";
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenTypeWatcher>(), typeof(TestSubjectEntity))).Callback(() =>
         {
-            RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), sut);
+            _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), sut);
         });
         
         sut.Create<TestSubjectEntity>(watcherName, nameof(TestSubjectEntity.Value),subject => true);
@@ -206,7 +209,7 @@ public class RavenTypeWatcherTests
         var watcherName = "TestSubject";
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenTypeWatcher>(), typeof(TestSubjectEntity))).Callback(() =>
         {
-            RavenCache.RavenTypeWatcherCache.TryAdd(typeof(TestSubjectEntity), sut);
+            _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), sut);
         });
         
         sut.Create<TestSubjectEntity>(watcherName, nameof(TestSubjectEntity.Value),subject => true);

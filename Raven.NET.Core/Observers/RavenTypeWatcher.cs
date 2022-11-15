@@ -7,7 +7,8 @@ using Raven.NET.Core.Configuration;
 using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Static;
+using Raven.NET.Core.Storage;
+using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Observers
@@ -17,6 +18,8 @@ namespace Raven.NET.Core.Observers
     {
         private readonly IRavenProvider _ravenProvider;
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
+        
+        private readonly IRavenStorage _ravenStorage = RavenStorage.Instance;
 
         private Func<RavenSubject,bool> _updateAction;
         private string _keyName;
@@ -27,11 +30,13 @@ namespace Raven.NET.Core.Observers
         internal RavenSettings _ravenSettings = new();
         internal List<RavenSubject> _watchedSubjects = new();
 
-        public RavenTypeWatcher(IRavenProvider ravenProvider, IRavenSettingsProvider ravenSettingsProvider)
+        public RavenTypeWatcher(
+            IRavenProvider ravenProvider,
+            IRavenSettingsProvider ravenSettingsProvider)
         {
             _ravenProvider = ravenProvider;
             _ravenSettingsProvider = ravenSettingsProvider;
-
+            
             _ravenSettings.BackgroundWorker = true;
             _ravenSettings.BackgroundWorkerInterval = 1.0f;
         }
@@ -62,7 +67,7 @@ namespace Raven.NET.Core.Observers
             
             _updateAction = callback;
             _ravenProvider.AddRaven(name,this, typeof(T));
-            RavenCache.SubjectTypeCache.TryAdd(typeof(T), new ConcurrentDictionary<string, string>());
+            _ravenStorage.SubjectTypeTryAdd(typeof(T), new ConcurrentDictionary<string, string>());
             _keyName = keyName;
 
             var ravenSettings = _ravenSettingsProvider.GetRaven(name);
@@ -91,7 +96,8 @@ namespace Raven.NET.Core.Observers
 
             if (_ravenSettings.BackgroundWorker.Value)
             {
-                new System.Threading.Timer((e) => { BackgroundWorkerRun(); }, null, TimeSpan.Zero, TimeSpan.FromSeconds(_ravenSettings.BackgroundWorkerInterval.Value));
+                new System.Threading.Timer((e) 
+                    => { BackgroundWorkerRun(); }, null, TimeSpan.Zero, TimeSpan.FromSeconds(_ravenSettings.BackgroundWorkerInterval.Value));
             }
             
             _logger.LogInformation($"Created new raven. {RavenName}");
@@ -162,7 +168,7 @@ namespace Raven.NET.Core.Observers
             
             if (!ravenWatcher._watchedSubjects.Any())
             {
-                RavenCache.RavenWatcherCache.Remove(ravenName, out _);
+                _ravenStorage.RavenWatcherRemove(ravenName);
                 _logger.LogInformation($"Removed raven {RavenName}");
                 return;
             }
