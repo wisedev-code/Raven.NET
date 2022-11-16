@@ -132,7 +132,7 @@ namespace Raven.NET.Core.Observers
         /// <inheritdoc/>
         void IRavenTypeWatcher.UpdateNewestSubject(string key, RavenSubject subject)
         {
-            _watchedSubjects.RemoveAll(x => x.GetType().GetProperty(_keyName).GetValue(x).ToString() == key);
+            _watchedSubjects.RemoveAll(x => x.GetType().GetProperty(_keyName)?.GetValue(x).ToString() == key);
             _logger.LogDebug($"Purged {RavenName} raven watch list.");
             _watchedSubjects.Add(subject);
             _logger.LogDebug($"Subject {subject.UniqueId} is added to {RavenName} raven watch list.");
