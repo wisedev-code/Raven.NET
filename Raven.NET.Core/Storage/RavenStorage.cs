@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Storage.Interfaces;
 
@@ -12,10 +13,10 @@ namespace Raven.NET.Core.Storage
         private ConcurrentDictionary<Type, ConcurrentDictionary<string, string>> SubjectTypeStorage { get; } = new();
         private ConcurrentDictionary<string, IRaven> RavenWatcherStorage { get; } = new();
         private ConcurrentDictionary<Type, IRavenTypeWatcher> RavenTypeWatcherStorage { get; } = new();
-
-        private static RavenStorage _instance;
-        private static readonly object Lock = new();
         
+        private static RavenStorage _instance = new();
+        private static readonly object Lock = new();
+
         public static RavenStorage Instance
         {
             get
@@ -37,47 +38,50 @@ namespace Raven.NET.Core.Storage
             }
         }
 
-        public bool SubjectExists(Guid key) => SubjectStorage.ContainsKey(key);
-        public string SubjectGet(Guid key) => SubjectStorage[key];
-        public bool SubjectTryAdd(Guid key, string value) => SubjectStorage.TryAdd(key, value);
-        public bool SubjectTryUpdate(Guid key, string newValue) => SubjectStorage.TryUpdate(key, newValue, SubjectStorage[key]);
-        public void SubjectRemove(Guid key) => SubjectStorage.Remove(key, out _);
+        public bool SubjectExists(Guid key) => _instance.SubjectStorage.ContainsKey(key);
+        public string SubjectGet(Guid key) => _instance.SubjectStorage[key];
+        public bool SubjectTryAdd(Guid key, string value) => _instance.SubjectStorage.TryAdd(key, value);
+        public bool SubjectTryUpdate(Guid key, string newValue) 
+            => _instance.SubjectStorage.TryUpdate(key, newValue, _instance.SubjectStorage[key]);
+        public void SubjectRemove(Guid key) => _instance.SubjectStorage.Remove(key, out _);
 
         
-        public bool SubjectTypeExists(Type type) => SubjectTypeStorage.ContainsKey(type);
-        public ConcurrentDictionary<string, string> SubjectTypeGet(Type type) => SubjectTypeStorage[type];
-        public bool SubjectTypeTryAdd(Type type, ConcurrentDictionary<string, string> dictionary) 
-            => SubjectTypeStorage.TryAdd(type, dictionary);
+        public bool SubjectTypeExists(Type type) => _instance.SubjectTypeStorage.ContainsKey(type);
+        public ConcurrentDictionary<string, string> SubjectTypeGet(Type type) => _instance.SubjectTypeStorage[type];
+
+        public bool SubjectTypeTryAdd(Type type, ConcurrentDictionary<string, string> dictionary)
+            => _instance.SubjectTypeStorage.TryAdd(type, dictionary);
+
         public bool SubjectTypeTryUpdate(Type type, ConcurrentDictionary<string, string> newDictionary)
-            => SubjectTypeStorage.TryUpdate(type, newDictionary, SubjectTypeStorage[type]);
-        public void SubjectTypeRemove(Type type) => SubjectTypeStorage.Remove(type, out _);
+            => _instance.SubjectTypeStorage.TryUpdate(type, newDictionary, _instance.SubjectTypeStorage[type]);
+        public void SubjectTypeRemove(Type type) => _instance.SubjectTypeStorage.Remove(type, out _);
         
         
         public bool SubjectTypeValueExists(Type type, string innerKey) 
-            => SubjectTypeStorage[type].ContainsKey(innerKey);
+            => _instance.SubjectTypeStorage[type].ContainsKey(innerKey);
         public string SubjectTypeValueGet(Type type, string innerKey)
-            => SubjectTypeStorage[type][innerKey];
+            => _instance.SubjectTypeStorage[type][innerKey];
         public bool SubjectTypeValueTryAdd(Type type, string innerKey, string innerValue)
-            => SubjectTypeStorage[type].TryAdd(innerKey, innerValue);
+            => _instance.SubjectTypeStorage[type].TryAdd(innerKey, innerValue);
         public bool SubjectTypeValueTryUpdate(Type type, string innerKey, string newValue)
-            => SubjectTypeStorage[type].TryUpdate(innerKey, newValue, SubjectTypeStorage[type][innerKey]);
+            => _instance.SubjectTypeStorage[type].TryUpdate(innerKey, newValue, _instance.SubjectTypeStorage[type][innerKey]);
         public void SubjectTypeValueRemove(Type type, string innerKey)
-            => SubjectTypeStorage[type].Remove(innerKey, out _);
+            => _instance.SubjectTypeStorage[type].Remove(innerKey, out _);
 
 
-        public bool RavenWatcherExists(string key) => RavenWatcherStorage.ContainsKey(key);
-        public IRaven RavenWatcherGet(string key) => RavenWatcherStorage[key];
-        public bool RavenWatcherTryAdd(string key, IRaven value) => RavenWatcherStorage.TryAdd(key, value);
+        public bool RavenWatcherExists(string key) => _instance.RavenWatcherStorage.ContainsKey(key);
+        public IRaven RavenWatcherGet(string key) => _instance.RavenWatcherStorage[key];
+        public bool RavenWatcherTryAdd(string key, IRaven value) => _instance.RavenWatcherStorage.TryAdd(key, value);
         public bool RavenWatcherTryUpdate(string key, IRaven newValue) 
-            => RavenWatcherStorage.TryUpdate(key, newValue, RavenWatcherStorage[key]);
-        public void RavenWatcherRemove(string key) => RavenWatcherStorage.Remove(key, out _);
+            => RavenWatcherStorage.TryUpdate(key, newValue, _instance.RavenWatcherStorage[key]);
+        public void RavenWatcherRemove(string key) => _instance.RavenWatcherStorage.Remove(key, out _);
 
         
-        public bool RavenTypeWatcherExists(Type type) => RavenTypeWatcherStorage.ContainsKey(type);
-        public IRavenTypeWatcher RavenTypeWatcherGet(Type type) => RavenTypeWatcherStorage[type];
-        public bool RavenTypeWatcherTryAdd(Type type, IRavenTypeWatcher value) => RavenTypeWatcherStorage.TryAdd(type, value);
+        public bool RavenTypeWatcherExists(Type type) => _instance.RavenTypeWatcherStorage.ContainsKey(type);
+        public IRavenTypeWatcher RavenTypeWatcherGet(Type type) => _instance.RavenTypeWatcherStorage[type];
+        public bool RavenTypeWatcherTryAdd(Type type, IRavenTypeWatcher value) => _instance.RavenTypeWatcherStorage.TryAdd(type, value);
         public bool RavenTypeWatcherTryUpdate(Type type, IRavenTypeWatcher newValue) 
-            => RavenTypeWatcherStorage.TryUpdate(type, newValue, RavenTypeWatcherStorage[type]);
-        public void RavenTypeWatcherRemove(Type type) => RavenTypeWatcherStorage.Remove(type, out _);
+            => _instance.RavenTypeWatcherStorage.TryUpdate(type, newValue, _instance.RavenTypeWatcherStorage[type]);
+        public void RavenTypeWatcherRemove(Type type) => _instance.RavenTypeWatcherStorage.Remove(type, out _);
     }
 }

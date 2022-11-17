@@ -18,8 +18,8 @@ namespace Raven.NET.Core.Observers
     {
         private readonly IRavenProvider _ravenProvider;
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
-        
-        private readonly IRavenStorage _ravenStorage = RavenStorage.Instance;
+
+        private readonly IRavenStorage _ravenStorage;
 
         private Func<RavenSubject,bool> _updateAction;
         private string _keyName;
@@ -32,11 +32,13 @@ namespace Raven.NET.Core.Observers
 
         public RavenTypeWatcher(
             IRavenProvider ravenProvider,
-            IRavenSettingsProvider ravenSettingsProvider)
+            IRavenSettingsProvider ravenSettingsProvider,
+            IRavenStorage ravenStorage)
         {
             _ravenProvider = ravenProvider;
             _ravenSettingsProvider = ravenSettingsProvider;
-            
+            _ravenStorage = ravenStorage;
+
             _ravenSettings.BackgroundWorker = true;
             _ravenSettings.BackgroundWorkerInterval = 1.0f;
         }
@@ -132,7 +134,7 @@ namespace Raven.NET.Core.Observers
         /// <inheritdoc/>
         void IRavenTypeWatcher.UpdateNewestSubject(string key, RavenSubject subject)
         {
-            _watchedSubjects.RemoveAll(x => x.GetType().GetProperty(_keyName)?.GetValue(x).ToString() == key);
+            _watchedSubjects.RemoveAll(x => x.GetType().GetProperty(_keyName).GetValue(x).ToString() == key);
             _logger.LogDebug($"Purged {RavenName} raven watch list.");
             _watchedSubjects.Add(subject);
             _logger.LogDebug($"Subject {subject.UniqueId} is added to {RavenName} raven watch list.");
