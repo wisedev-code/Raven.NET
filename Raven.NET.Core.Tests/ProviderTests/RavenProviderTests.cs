@@ -18,108 +18,134 @@ public class RavenProviderTests
     private readonly IRavenProvider sut;
     private readonly Mock<IRavenWatcher> _ravenWatcher;
     private readonly Mock<IRavenTypeWatcher> _ravenTypeWatcher;
-    
-    private readonly IRavenStorage _ravenStorage;
-    
+    private readonly Mock<IRavenStorage> _ravenStorage;
+
     public RavenProviderTests()
     {
-        _ravenStorage = RavenStorage.TestInstance;
+        _ravenStorage = new Mock<IRavenStorage>();
         _ravenWatcher = new Mock<IRavenWatcher>();
         _ravenTypeWatcher = new Mock<IRavenTypeWatcher>();
-        sut = new RavenProvider(_ravenStorage);
+        sut = new RavenProvider(_ravenStorage.Object);
     }
 
-    //!
-    [Fact]
-    void AddRaven_Should_AddRavenToInternalRavenCache_WhenNoTypeProvided()
-    {
-        //Arrange 
-        var raven = _ravenWatcher.Object;
-        var name = "TestWatcher";
+    // [Fact]
+    // public void AddRaven_Should_AddRavenToInternalRavenCache_WhenNoTypeProvided()
+    // {
+    //     //Arrange
+    //     var raven = _ravenWatcher.Object;
+    //     var name = "TestWatcher";
+    //     _ravenStorage.Setup(x => x.RavenWatcherTryAdd(name, raven)).Returns(true);
+    //     
+    //     //Act
+    //     sut.AddRaven(name, raven);
+    //     
+    //     //Assert
+    //     _ravenStorage.Verify(x => x.RavenTypeWatcherTryAdd(It.IsAny<Type>(), It.IsAny<IRavenTypeWatcher>()), Times.Never);
+    //     _ravenStorage.Verify(x => x.RavenWatcherTryAdd(name, raven), Times.Once);
+    // }
+    //
+    // [Fact]
+    // public void AddRaven_Should_ThrowException_WhenRavenAlreadyExists()
+    // {
+    //     //Arrange
+    //     var raven = _ravenWatcher.Object;
+    //     var name = "TestWatcher";
+    //     _ravenStorage.Setup(x => x.RavenWatcherTryAdd(name, raven)).Returns(false);
+    //     
+    //     //Act
+    //     var ex = Record.Exception(() => sut.AddRaven(name, raven));
+    //     
+    //     //Assert
+    //     ex.ShouldNotBeNull();
+    //     ex.ShouldBeOfType<RavenAlreadyExistsException>();
+    //     
+    //     _ravenStorage.Verify(x => x.RavenTypeWatcherTryAdd(It.IsAny<Type>(), It.IsAny<IRavenTypeWatcher>()), Times.Never);
+    //     _ravenStorage.Verify(x => x.RavenWatcherTryAdd(name, raven), Times.Once);
+    // }
+    //
+    // [Fact]
+    // public void AddRaven_Should_AddRavenToInternalRavenTypeCache_WhenTypeProvided()
+    // {
+    //     //Arrange
+    //     var raven = _ravenTypeWatcher.Object;
+    //     var name = "TestTypeWatcher";
+    //     _ravenStorage.Setup(x => x.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven)).Returns(true);
+    //     _ravenStorage.Setup(x => x.RavenWatcherTryAdd(name, raven)).Returns(true);
+    //     
+    //     //Act
+    //     sut.AddRaven(name, raven, typeof(TestSubjectEntity));
+    //     
+    //     //Assert
+    //     _ravenStorage.Verify(x => x.RavenTypeWatcherTryAdd(It.IsAny<Type>(), raven), Times.Once);
+    //     _ravenStorage.Verify(x => x.RavenWatcherTryAdd(name, raven), Times.Once);
+    // }
+    //
+    // [Fact]
+    // public void AddRaven_Should_ThrowException_WhenRavenTypeAlreadyExists()
+    // {
+    //     //Arrange
+    //     var raven = _ravenTypeWatcher.Object;
+    //     var name = "TestTypeWatcher";
+    //     _ravenStorage.Setup(x => x.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven)).Returns(false);
+    //
+    //     //Act
+    //     var ex = Record.Exception(() => sut.AddRaven(name, raven, typeof(TestSubjectEntity)));
+    //     
+    //     //Assert
+    //     ex.ShouldNotBeNull();
+    //     ex.ShouldBeOfType<RavenForTypeAlreadyExistsException>();
+    //     
+    //     _ravenStorage.Verify(x => x.RavenTypeWatcherTryAdd(It.IsAny<Type>(), raven), Times.Once);
+    //     _ravenStorage.Verify(x => x.RavenWatcherTryAdd(name, raven), Times.Never);
+    // }
+    //
+    // [Fact]
+    // public void RemoveRaven_Should_RemoveRavenFromInternalCache()
+    // {
+    //     //Arrange
+    //     var raven = _ravenWatcher.Object;
+    //     var name = "TestWatcherToRemove";
+    //     _ravenStorage.Setup(x => x.RavenWatcherExists(name)).Returns(true);
+    //     
+    //     //Act
+    //     sut.RemoveRaven(name);
+    //     
+    //     //Assert
+    //     _ravenStorage.Verify(x => x.RavenWatcherRemove(name), Times.Once);
+    // }
+    
+    
 
-        //Act
-        sut.AddRaven(name, raven);
-        
-        //Assert
-        _ravenStorage.RavenWatcherExists(name).ShouldBeTrue();
-    }
-    
-    [Fact]
-    void AddRaven_Should_ThrowException_WhenRavenAlreadyExists()
-    {
-        //Arrange 
-        var raven = _ravenWatcher.Object;
-        var name = "TestWatcher";
-        _ravenStorage.RavenWatcherTryAdd(name, raven);
-
-        //Act
-        var ex = Record.Exception(() => sut.AddRaven(name, raven));
-        
-        //Assert
-        ex.ShouldNotBeNull();
-        ex.ShouldBeOfType<RavenAlreadyExistsException>();
-    }
-    
-    [Fact]
-    void AddRaven_Should_AddRavenToInternalRavenTypeCache_WhenTypeProvided()
-    {
-        //Arrange 
-        var raven = _ravenTypeWatcher.Object;
-        var name = "TestWatcher";
-        
-        //Act
-        sut.AddRaven(name, raven, typeof(TestSubjectEntity));
-        
-        //Assert
-        _ravenStorage.RavenTypeWatcherExists(typeof(TestSubjectEntity)).ShouldBeTrue();
-    }
-    
-    [Fact]
-    void AddRaven_Should_ThrowException_WhenRavenTypeAlreadyExists()
-    {
-        //Arrange 
-        var raven = _ravenTypeWatcher.Object;
-        var name = "TestWatcher";
-        _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven);
-
-        //Act
-        var ex = Record.Exception(() => sut.AddRaven(name, raven, typeof(TestSubjectEntity)));
-        
-        //Assert
-        ex.ShouldNotBeNull();
-        ex.ShouldBeOfType<RavenForTypeAlreadyExistsException>();
-    }
-    
-    [Fact]
-    void RemoveRaven_Should_RemoveRavenFromInternalCache()
-    {
-        //Arrange 
-        var raven = _ravenWatcher.Object;
-        var name = "TestWatcher";
-        _ravenStorage.RavenWatcherTryAdd(name, raven);
-    
-        //Act
-        sut.RemoveRaven(name);
-        
-        //Assert
-        _ravenStorage.RavenWatcherExists(name).ShouldBeFalse();
-    }
-    
-    [Fact]
-    void RemoveRaven_Should_ThrowExceptionWhenRavenDoesNotExist()
-    {
-        //Arrange 
-        var raven = _ravenWatcher.Object;
-        var name = "TestWatcher";
-    
-        //Act
-        var ex = Record.Exception(() => sut.RemoveRaven(name));
-        
-        //Assert
-        ex.ShouldNotBeNull();
-        ex.ShouldBeOfType<RavenDoesNotExistsException>();
-    }
-    
+    // [Fact]
+    // void RemoveRaven_Should_RemoveRavenFromInternalCache()
+    // {
+    //     //Arrange 
+    //     var raven = _ravenWatcher.Object;
+    //     var name = "TestWatcher";
+    //     _ravenStorage.RavenWatcherTryAdd(name, raven);
+    //
+    //     //Act
+    //     sut.RemoveRaven(name);
+    //     
+    //     //Assert
+    //     _ravenStorage.RavenWatcherExists(name).ShouldBeFalse();
+    // }
+    //
+    // [Fact]
+    // void RemoveRaven_Should_ThrowExceptionWhenRavenDoesNotExist()
+    // {
+    //     //Arrange 
+    //     var raven = _ravenWatcher.Object;
+    //     var name = "TestWatcher";
+    //
+    //     //Act
+    //     var ex = Record.Exception(() => sut.RemoveRaven(name));
+    //     
+    //     //Assert
+    //     ex.ShouldNotBeNull();
+    //     ex.ShouldBeOfType<RavenDoesNotExistsException>();
+    // }
+    //
     // [Fact]
     // void GetRaven_Should_ReturnRavenWatcher_WhenNoTypeProvided()
     // {
@@ -154,50 +180,50 @@ public class RavenProviderTests
     //     //Assert
     //     _ravenWatcher.Verify(x => x.Update(mockedSubject));
     // }
-
-    [Fact]
-    void GetRaven_Should_ReturnException_WhenRavenDoesNotExist()
-    {
-        //Arrange 
-        var raven = _ravenWatcher.Object;
-        var name = "TestWatcher";
-        
-        //Act
-        var ex = Record.Exception(() => sut.GetRaven(name));
-        
-        //Assert
-        ex.ShouldNotBeNull();
-        ex.ShouldBeOfType<RavenDoesNotExistsException>();
-    }
-    
-    //! Took much longer
-    [Fact]
-    void GetRaven_Should_ReturnRavenTypeWatcher_WhenTypeProvided()
-    {
-        //Arrange 
-        var raven = _ravenTypeWatcher.Object;
-        var name = "TestWatcher";
-        _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven);
-        
-        //Act
-        var result = sut.GetRaven(name, typeof(TestSubjectEntity));
-        
-        //Assert
-        result.ShouldNotBeNull();
-    }
-    
-    [Fact]
-    void GetRaven_Should_ReturnException_WhenTypeRavenDoesNotExist()
-    {
-        //Arrange 
-        var raven = _ravenTypeWatcher.Object;
-        var name = "TestWatcher";
-        
-        //Act
-        var ex = Record.Exception(() => sut.GetRaven(name, typeof(TestSubjectEntity)));
-        
-        //Assert
-        ex.ShouldNotBeNull();
-        ex.ShouldBeOfType<RavenDoesNotExistsException>();
-    }
+    //
+    // [Fact]
+    // void GetRaven_Should_ReturnException_WhenRavenDoesNotExist()
+    // {
+    //     //Arrange 
+    //     var raven = _ravenWatcher.Object;
+    //     var name = "TestWatcher";
+    //     
+    //     //Act
+    //     var ex = Record.Exception(() => sut.GetRaven(name));
+    //     
+    //     //Assert
+    //     ex.ShouldNotBeNull();
+    //     ex.ShouldBeOfType<RavenDoesNotExistsException>();
+    // }
+    //
+    // //! Took much longer
+    // [Fact]
+    // void GetRaven_Should_ReturnRavenTypeWatcher_WhenTypeProvided()
+    // {
+    //     //Arrange 
+    //     var raven = _ravenTypeWatcher.Object;
+    //     var name = "TestWatcher";
+    //     _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven);
+    //     
+    //     //Act
+    //     var result = sut.GetRaven(name, typeof(TestSubjectEntity));
+    //     
+    //     //Assert
+    //     result.ShouldNotBeNull();
+    // }
+    //
+    // [Fact]
+    // void GetRaven_Should_ReturnException_WhenTypeRavenDoesNotExist()
+    // {
+    //     //Arrange 
+    //     var raven = _ravenTypeWatcher.Object;
+    //     var name = "TestWatcher";
+    //     
+    //     //Act
+    //     var ex = Record.Exception(() => sut.GetRaven(name, typeof(TestSubjectEntity)));
+    //     
+    //     //Assert
+    //     ex.ShouldNotBeNull();
+    //     ex.ShouldBeOfType<RavenDoesNotExistsException>();
+    // }
 }
