@@ -11,6 +11,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Raven.NET.Core\Raven.NET.Core.csproj" />
+      <ProjectReference Include="..\..\Riven.NET.Analytics\Riven.NET.Analytics.csproj" />
     </ItemGroup>
 
     <ItemGroup>

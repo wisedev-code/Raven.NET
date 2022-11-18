@@ -7,6 +7,7 @@ using Raven.NET.Core.Configuration;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers;
 using Raven.NET.Core.Providers.Interfaces;
+using Riven.NET.Analytics;
 
 namespace Raven.NET.Demo.Console
 {
@@ -22,6 +23,8 @@ namespace Raven.NET.Demo.Console
                 .ConfigureServices((_, services) =>
                 {
                     services.ConfigureRaven(configuration);
+                    services.AddRavenAnalytics();
+                    
                 }).Build();
 
             var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);
