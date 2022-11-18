@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Storage.Interfaces;
 
@@ -9,10 +8,10 @@ namespace Raven.NET.Core.Storage
 {
     public class RavenStorage : IRavenStorage
     {
-        private ConcurrentDictionary<Guid, string> SubjectStorage { get; } = new();
-        private ConcurrentDictionary<Type, ConcurrentDictionary<string, string>> SubjectTypeStorage { get; } = new();
-        private ConcurrentDictionary<string, IRaven> RavenWatcherStorage { get; } = new();
-        private ConcurrentDictionary<Type, IRavenTypeWatcher> RavenTypeWatcherStorage { get; } = new();
+        private ConcurrentDictionary<Guid, string> SubjectStorage { get; set; } = new();
+        private ConcurrentDictionary<Type, ConcurrentDictionary<string, string>> SubjectTypeStorage { get; set; } = new();
+        private ConcurrentDictionary<string, IRaven> RavenWatcherStorage { get; set; } = new();
+        private ConcurrentDictionary<Type, IRavenTypeWatcher> RavenTypeWatcherStorage { get; set; } = new();
         
         private static RavenStorage _instance = new();
 

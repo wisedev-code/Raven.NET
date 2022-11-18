@@ -21,7 +21,6 @@ namespace Raven.NET.Core.Providers
             _ravenStorage = ravenStorage;
         }
 
-
         /// <inheritdoc/>
         void IRavenProvider.AddRaven(string ravenName, IRaven raven, Type subjectType = default)
         {
