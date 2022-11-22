@@ -15,22 +15,25 @@ using Xunit;
 
 namespace Raven.NET.Core.Tests.WatcherTests;
 
-[Collection("Tests")]
+[Collection("RavenWatcherTests")]
 public class RavenWatcherTests
 {
     private Fixture _fixture;
     private readonly IRavenWatcher sut;
-    private readonly IRavenStorage _ravenStorage;
     private readonly Mock<IRavenProvider> _ravenProvider;
     private readonly Mock<IRavenSettingsProvider> _ravenSettingsProvider;
+    private readonly Mock<IRavenStorage> _ravenStorage;
 
     public RavenWatcherTests()
     {
         _fixture = new Fixture();
         _ravenProvider = new Mock<IRavenProvider>();
         _ravenSettingsProvider = new Mock<IRavenSettingsProvider>();
-        sut = new RavenWatcher(_ravenProvider.Object, _ravenSettingsProvider.Object);
-        _ravenStorage = RavenStorage.Instance;
+        _ravenStorage = new Mock<IRavenStorage>();
+        sut = new RavenWatcher(
+            _ravenProvider.Object,
+            _ravenSettingsProvider.Object,
+            _ravenStorage.Object);
     }
 
     [Fact]
@@ -40,14 +43,14 @@ public class RavenWatcherTests
         var watcherName = "TestWatcher";
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenWatcher>(), null)).Callback(() =>
         {
-            _ravenStorage.RavenWatcherTryAdd(watcherName, sut);
+            _ravenStorage.Setup(x => x.RavenWatcherTryAdd(watcherName, sut)).Returns(true);
         });
 
         //Act
         sut.Create(watcherName, subject => true);
 
         //Assert
-        _ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
+        //_ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
         var settings = (sut as RavenWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Warning);
         settings.AutoDestroy.ShouldBe(false);
@@ -63,26 +66,25 @@ public class RavenWatcherTests
         var settingsMock = _fixture.Create<RavenSettings>();
         settingsMock.AutoDestroy = true;
         settingsMock.LogLevel = LogLevel.Trace;
-
+    
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenWatcher>(), null)).Callback(() =>
         {
-            _ravenStorage.RavenWatcherTryAdd(watcherName, sut);
+            _ravenStorage.Setup(x => x.RavenWatcherTryAdd(watcherName, sut)).Returns(true);
         });
-
+    
         _ravenSettingsProvider.Setup(x => x.GetRaven(watcherName)).Returns(settingsMock);
-
+    
         //Act
         sut.Create(watcherName, subject => true);
-
+    
         //Assert
-        _ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
         var settings = (sut as RavenWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Trace);
         settings.AutoDestroy.ShouldBe(true);
         _ravenSettingsProvider.Verify(x => x.GetRaven(watcherName));
         _ravenProvider.Verify(x => x.AddRaven(watcherName, sut, null));
     }
-
+    
     [Fact]
     void Create_Should_AddWatcherToCacheWithProvidedConfiguration_When_OptionsParameterProvided()
     {
@@ -91,23 +93,22 @@ public class RavenWatcherTests
         var settingsMock = _fixture.Create<RavenSettings>();
         settingsMock.AutoDestroy = true;
         settingsMock.LogLevel = LogLevel.Trace;
-
+    
         _ravenProvider.Setup(x => x.AddRaven(It.IsAny<string>(), It.IsAny<IRavenWatcher>(), null)).Callback(() =>
         {
-            _ravenStorage.RavenWatcherTryAdd(watcherName, sut);
+            _ravenStorage.Setup(x => x.RavenWatcherTryAdd(watcherName, sut)).Returns(true);
         });
-
+    
         _ravenSettingsProvider.Setup(x => x.GetRaven(watcherName)).Returns(settingsMock);
-
+    
         //Act
         sut.Create(watcherName, subject => true, ravenSettings =>
         {
             ravenSettings.AutoDestroy = false;
             ravenSettings.LogLevel = LogLevel.Critical;
         });
-
+    
         //Assert
-        _ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
         var settings = (sut as RavenWatcher)?._ravenSettings;
         settings.LogLevel.ShouldBe(LogLevel.Critical);
         settings.AutoDestroy.ShouldBe(false);

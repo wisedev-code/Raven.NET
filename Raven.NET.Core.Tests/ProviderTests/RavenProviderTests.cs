@@ -4,7 +4,6 @@ using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Storage;
 using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Tests.SubjectTests;
 using Shouldly;
@@ -12,21 +11,21 @@ using Xunit;
 
 namespace Raven.NET.Core.Tests.ProviderTests;
 
-[Collection("Tests")]
+[Collection("RavenProviderTests")]
 public class RavenProviderTests
 {
     private readonly IRavenProvider sut;
     private readonly Mock<IRavenWatcher> _ravenWatcher;
     private readonly Mock<IRavenTypeWatcher> _ravenTypeWatcher;
     
-    private readonly IRavenStorage _ravenStorage;
+    private readonly Mock<IRavenStorage> _ravenStorage;
     
     public RavenProviderTests()
     {
-        _ravenStorage = RavenStorage.TestInstance;
+        _ravenStorage = new Mock<IRavenStorage>();
         _ravenWatcher = new Mock<IRavenWatcher>();
         _ravenTypeWatcher = new Mock<IRavenTypeWatcher>();
-        sut = new RavenProvider();
+        sut = new RavenProvider(_ravenStorage.Object);
     }
 
     [Fact]
@@ -35,12 +34,14 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
+        _ravenStorage.Setup(x => x.RavenWatcherTryAdd(name, raven)).Returns(true);
 
         //Act
         sut.AddRaven(name, raven);
         
         //Assert
-        _ravenStorage.RavenWatcherExists(name).ShouldBeTrue();
+        _ravenStorage.Verify(x => x.RavenWatcherTryAdd(name, raven), Times.Once);
+        //_ravenStorage.Object.RavenWatcherExists(name).ShouldBeTrue();
     }
     
     [Fact]
@@ -49,7 +50,7 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        _ravenStorage.RavenWatcherTryAdd(name, raven);
+        _ravenStorage.Object.RavenWatcherTryAdd(name, raven);
 
         //Act
         var ex = Record.Exception(() => sut.AddRaven(name, raven));
@@ -65,12 +66,16 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
+        _ravenStorage.Setup(x => x.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven)).Returns(true);
+        _ravenStorage.Setup(x => x.RavenWatcherTryAdd(name, raven)).Returns(true);
 
         //Act
         sut.AddRaven(name, raven, typeof(TestSubjectEntity));
         
         //Assert
-        _ravenStorage.RavenTypeWatcherExists(typeof(TestSubjectEntity)).ShouldBeTrue();
+        _ravenStorage.Verify(x => x.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven), Times.Once);
+        _ravenStorage.Verify(x => x.RavenWatcherTryAdd(name, raven), Times.Once);
+        //_ravenStorage.Object.RavenTypeWatcherExists(typeof(TestSubjectEntity)).ShouldBeTrue();
     }
     
     [Fact]
@@ -79,7 +84,7 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
-        _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven);
+        _ravenStorage.Object.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven);
 
         //Act
         var ex = Record.Exception(() => sut.AddRaven(name, raven, typeof(TestSubjectEntity)));
@@ -95,13 +100,14 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        _ravenStorage.RavenWatcherTryAdd(name, raven);
+        _ravenStorage.Object.RavenWatcherTryAdd(name, raven);
+        _ravenStorage.Setup(x => x.RavenWatcherExists(name)).Returns(true);
 
         //Act
         sut.RemoveRaven(name);
         
         //Assert
-        _ravenStorage.RavenWatcherExists(name).ShouldBeFalse();
+        _ravenStorage.Verify(x => x.RavenWatcherRemove(name), Times.Once);
     }
     
     [Fact]
@@ -126,7 +132,9 @@ public class RavenProviderTests
         
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        _ravenStorage.RavenWatcherTryAdd(name, raven);
+        _ravenStorage.Object.RavenWatcherTryAdd(name, raven);
+        _ravenStorage.Setup(x => x.RavenWatcherExists(name)).Returns(true);
+        _ravenStorage.Setup(x => x.RavenWatcherGet(name)).Returns(raven);
         
         //Act
         var result = sut.GetRaven(name);
@@ -157,8 +165,10 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
-        _ravenStorage.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven);
-        
+        _ravenStorage.Object.RavenTypeWatcherTryAdd(typeof(TestSubjectEntity), raven);
+        _ravenStorage.Setup(x => x.RavenTypeWatcherExists(typeof(TestSubjectEntity))).Returns(true);
+        _ravenStorage.Setup(x => x.RavenTypeWatcherGet(typeof(TestSubjectEntity))).Returns(raven);
+
         //Act
         var result = sut.GetRaven(name, typeof(TestSubjectEntity));
         
@@ -172,6 +182,7 @@ public class RavenProviderTests
         //Arrange 
         var raven = _ravenTypeWatcher.Object;
         var name = "TestWatcher";
+        _ravenStorage.Setup(x => x.RavenWatcherExists(name)).Returns(false);
         
         //Act
         var ex = Record.Exception(() => sut.GetRaven(name, typeof(TestSubjectEntity)));
@@ -188,7 +199,7 @@ public class RavenProviderTests
         var fixture = new Fixture();
         var raven = _ravenWatcher.Object;
         var name = "TestWatcher";
-        _ravenStorage.RavenWatcherTryAdd(name, raven);
+        _ravenStorage.Object.RavenWatcherTryAdd(name, raven);
         var mockedSubject = fixture.Create<TestSubjectEntity>();
         mockedSubject.Attach(raven);
         

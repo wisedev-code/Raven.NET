@@ -17,7 +17,7 @@ namespace Raven.NET.Core.Observers
     {
         private readonly IRavenProvider _ravenProvider;
         private readonly IRavenSettingsProvider _ravenSettingsProvider;
-        private readonly IRavenStorage _ravenStorage = RavenStorage.Instance;
+        private readonly IRavenStorage _ravenStorage;// = RavenStorage.Instance;
         
         private Func<RavenSubject,bool> updateAction;
         private ILogger<RavenWatcher> _logger;
@@ -27,10 +27,11 @@ namespace Raven.NET.Core.Observers
         internal List<RavenSubject> _watchedSubjects = new();
 
 
-        public RavenWatcher(IRavenProvider ravenProvider, IRavenSettingsProvider ravenSettingsProvider)
+        public RavenWatcher(IRavenProvider ravenProvider, IRavenSettingsProvider ravenSettingsProvider, IRavenStorage ravenStorage)
         {
             _ravenProvider = ravenProvider;
             _ravenSettingsProvider = ravenSettingsProvider;
+            _ravenStorage = ravenStorage;
         }
         
         /// <inheritdoc/>

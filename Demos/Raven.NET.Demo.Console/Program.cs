@@ -24,8 +24,8 @@ namespace Raven.NET.Demo.Console
                     services.ConfigureRaven(configuration);
                 }).Build();
 
-            var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);
-            //var service = ActivatorUtilities.CreateInstance<RavenWatcherDemoService>(host.Services);
+            //var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);
+            var service = ActivatorUtilities.CreateInstance<RavenWatcherDemoService>(host.Services);
             service.Run();
         }
 

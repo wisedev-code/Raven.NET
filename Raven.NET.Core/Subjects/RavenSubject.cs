@@ -13,8 +13,8 @@ namespace Raven.NET.Core.Subjects
     /// </summary>
     public class RavenSubject
     {
-        private readonly IRavenStorage _ravenStorage = RavenStorage.Instance;
-        
+        private readonly IRavenStorage _ravenStorage = RavenStorage.GetInstance();
+
         internal List<IRaven> Observers = new();
         internal Guid UniqueId { get; set; }
 
@@ -82,7 +82,7 @@ namespace Raven.NET.Core.Subjects
             {
                 _ravenStorage.SubjectTypeValueTryAdd(type, key, valueToStore);
                 Observers.Add(_ravenStorage.RavenTypeWatcherGet(type));
-                return;;
+                return;
             }
 
             var existingValue = _ravenStorage.SubjectTypeValueGet(type, key);
