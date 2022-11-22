@@ -4,7 +4,6 @@ using Raven.NET.Core.Exceptions;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers;
 using Raven.NET.Core.Providers.Interfaces;
-using Raven.NET.Core.Storage;
 using Raven.NET.Core.Storage.Interfaces;
 using Raven.NET.Core.Tests.SubjectTests;
 using Shouldly;
@@ -12,7 +11,7 @@ using Xunit;
 
 namespace Raven.NET.Core.Tests.ProviderTests;
 
-[Collection("Tests")]
+//[Collection("Tests")]
 public class RavenProviderTests
 {
     private readonly IRavenProvider sut;
