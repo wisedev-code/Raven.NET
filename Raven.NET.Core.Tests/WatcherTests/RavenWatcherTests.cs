@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Raven.NET.Core.Tests.WatcherTests;
 
-[Collection("Tests")]
+[Collection("RavenWatcherTests")]
 public class RavenWatcherTests
 {
     private Fixture _fixture;

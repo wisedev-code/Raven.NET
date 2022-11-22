@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Raven.NET.Core.Tests.SubjectTests;
 
-[Collection("Tests")]
+[Collection("RavenSubjectTests")]
 public class RavenSubjectTests
 {
     private readonly Mock<IRavenWatcher> _ravenWatcher;

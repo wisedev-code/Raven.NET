@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Raven.NET.Core.Tests.ProviderTests;
 
-//[Collection("Tests")]
+[Collection("RavenProviderTests")]
 public class RavenProviderTests
 {
     private readonly IRavenProvider sut;
