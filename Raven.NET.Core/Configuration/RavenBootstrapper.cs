@@ -5,6 +5,8 @@ using Raven.NET.Core.Observers;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Providers;
 using Raven.NET.Core.Providers.Interfaces;
+using Raven.NET.Core.Storage;
+using Raven.NET.Core.Storage.Interfaces;
 
 namespace Raven.NET.Core.Configuration
 {
@@ -20,6 +22,8 @@ namespace Raven.NET.Core.Configuration
             services.AddTransient<IRavenWatcher, RavenWatcher>();
             services.AddTransient<IRavenProvider, RavenProvider>();
             services.AddTransient<IRavenTypeWatcher, RavenTypeWatcher>();
+
+            services.AddSingleton<IRavenStorage, RavenStorage>();
         }
     }
 }

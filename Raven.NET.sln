@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Core.Tests", "Rav
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Riven.NET.Analytics", "Riven.NET.Analytics\Riven.NET.Analytics.csproj", "{3B57BDC5-197F-465D-876F-AAA3DE2FD13E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Demo.WebApi", "Demos\Raven.NET.Demo.WebApi\Raven.NET.Demo.WebApi.csproj", "{2DA12178-4CCA-477E-BF21-87925ED1C86E}"
+EndProject
 
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,5 +41,9 @@ Global
 		{3B57BDC5-197F-465D-876F-AAA3DE2FD13E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B57BDC5-197F-465D-876F-AAA3DE2FD13E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B57BDC5-197F-465D-876F-AAA3DE2FD13E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DA12178-4CCA-477E-BF21-87925ED1C86E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DA12178-4CCA-477E-BF21-87925ED1C86E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DA12178-4CCA-477E-BF21-87925ED1C86E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DA12178-4CCA-477E-BF21-87925ED1C86E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
