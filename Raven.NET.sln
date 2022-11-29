@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Demo.Console", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Core.Tests", "Raven.NET.Core.Tests\Raven.NET.Core.Tests.csproj", "{BA46E0A9-15C6-4296-9478-446C1258EAD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Riven.NET.Analytics", "Riven.NET.Analytics\Riven.NET.Analytics.csproj", "{3B57BDC5-197F-465D-876F-AAA3DE2FD13E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Analytics", "Raven.NET.Analytics\Raven.NET.Analytics.csproj", "{3B57BDC5-197F-465D-876F-AAA3DE2FD13E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.NET.Demo.WebApi", "Demos\Raven.NET.Demo.WebApi\Raven.NET.Demo.WebApi.csproj", "{2DA12178-4CCA-477E-BF21-87925ED1C86E}"
 EndProject

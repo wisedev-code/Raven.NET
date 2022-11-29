@@ -25,6 +25,10 @@
         <None Update="HTML\subjects.html">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+
+        <None Update="HTML\about.html">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
         
         <None Update="HTML\js\animated.js">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -145,6 +149,14 @@
         <None Update="HTML\css\bootstrap.min.css">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Raven.NET.Core\Raven.NET.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     </ItemGroup>
 
 </Project>

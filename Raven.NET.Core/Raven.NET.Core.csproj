@@ -27,6 +27,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Raven.NET.Analytics" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="..\icon.png" Pack="true" PackagePath="\" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>Raven.NET.Core.Tests</_Parameter1>

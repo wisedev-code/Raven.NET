@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using Raven.NET.Core.Observers;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Storage.Interfaces;
+using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Storage
 {
@@ -23,6 +26,36 @@ namespace Raven.NET.Core.Storage
 
         public bool SubjectExists(Guid key) => _instance.SubjectStorage.ContainsKey(key);
         public string SubjectGet(Guid key) => _instance.SubjectStorage[key];
+        public List<RavenSubject> GetAllSubjects()
+        {
+            var watchers = RavenWatcherStorage.Values.ToList();
+            watchers.AddRange(RavenTypeWatcherStorage.Values);
+
+            List<RavenSubject> subjects = new List<RavenSubject>();
+            foreach (var watcher in watchers)
+            {
+                if (watcher is RavenTypeWatcher typeWatcher)
+                {
+                    foreach (var subject in typeWatcher._watchedSubjects)
+                    {
+                        var type = GetType();
+                        subject.Key = type.GetProperty(((IRavenTypeWatcher)typeWatcher).KeyName)?.GetValue(this).ToString();
+                        subjects.Add(subject);
+                    }
+                    
+                    continue;
+                }
+
+                foreach (var subject in (watcher as RavenWatcher)._watchedSubjects)
+                {
+                    subject.Key = subject.UniqueId.ToString();
+                    subjects.Add(subject);
+                }
+            }
+
+            return subjects;
+        }
+
         public bool SubjectTryAdd(Guid key, string value) => _instance.SubjectStorage.TryAdd(key, value);
         public bool SubjectTryUpdate(Guid key, string newValue) 
             => _instance.SubjectStorage.TryUpdate(key, newValue, _instance.SubjectStorage[key]);
@@ -58,8 +91,15 @@ namespace Raven.NET.Core.Storage
         public bool RavenWatcherTryUpdate(string key, IRaven newValue) 
             => RavenWatcherStorage.TryUpdate(key, newValue, _instance.RavenWatcherStorage[key]);
         public void RavenWatcherRemove(string key) => _instance.RavenWatcherStorage.Remove(key, out _);
+        public List<IRaven> GetAllRavens()
+        {
+            var watchers = RavenWatcherStorage.Values.ToList();
+            watchers.AddRange(RavenTypeWatcherStorage.Values);
 
-        
+            return watchers;
+        }
+
+
         public bool RavenTypeWatcherExists(Type type) => _instance.RavenTypeWatcherStorage.ContainsKey(type);
         public IRavenTypeWatcher RavenTypeWatcherGet(Type type) => _instance.RavenTypeWatcherStorage[type];
         public bool RavenTypeWatcherTryAdd(Type type, IRavenTypeWatcher value) => _instance.RavenTypeWatcherStorage.TryAdd(type, value);

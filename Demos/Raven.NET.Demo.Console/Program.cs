@@ -2,12 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Raven.NET.Core.Observers;
+using Raven.NET.Analytics;
 using Raven.NET.Core.Configuration;
-using Raven.NET.Core.Observers.Interfaces;
-using Raven.NET.Core.Providers;
-using Raven.NET.Core.Providers.Interfaces;
-using Riven.NET.Analytics;
 
 namespace Raven.NET.Demo.Console
 {
@@ -24,9 +20,11 @@ namespace Raven.NET.Demo.Console
                 {
                     services.ConfigureRaven(configuration);
                     services.AddRavenAnalytics();
-                    
-                }).Build();
 
+                }).Build();
+            
+            host.Services.UseRavenAnalytics();
+            
             //var service = ActivatorUtilities.CreateInstance<RavenTypeWatcherDemoService>(host.Services);
             var service = ActivatorUtilities.CreateInstance<RavenWatcherDemoService>(host.Services);
             service.Run();

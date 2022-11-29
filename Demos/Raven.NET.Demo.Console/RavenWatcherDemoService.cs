@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Microsoft.Extensions.Logging;
 using Raven.NET.Core.Observers.Interfaces;
 using Raven.NET.Core.Subjects;
@@ -74,7 +75,11 @@ public class RavenWatcherDemoService
         testPhone2.TryNotify();
         testPhone3.TryNotify();
 
-        System.Console.ReadLine();
+        while (true)
+        {
+            Thread.Sleep(50);
+            //System.Console.ReadLine();
+        }
     }
 
     private bool PhoneUpdated(RavenSubject ravenSubject)

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Raven.NET.Core.Observers.Interfaces;
+using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Storage.Interfaces
 {
@@ -8,6 +10,7 @@ namespace Raven.NET.Core.Storage.Interfaces
     {
         public bool SubjectExists(Guid key);
         public string SubjectGet(Guid key);
+        public List<RavenSubject> GetAllSubjects();
         public bool SubjectTryAdd(Guid key, string value);
         public bool SubjectTryUpdate(Guid key, string value);
         public void SubjectRemove(Guid key);
@@ -30,6 +33,7 @@ namespace Raven.NET.Core.Storage.Interfaces
         public bool RavenWatcherTryAdd(string key, IRaven value);
         public bool RavenWatcherTryUpdate(string key, IRaven newValue);
         public void RavenWatcherRemove(string key);
+        public List<IRaven> GetAllRavens();
 
         public bool RavenTypeWatcherExists(Type type);
         public IRavenTypeWatcher RavenTypeWatcherGet(Type type);
