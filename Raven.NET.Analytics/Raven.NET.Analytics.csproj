@@ -148,6 +148,12 @@
         <None Update="HTML\css\bootstrap.min.css">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        
+        <None Include="..\icon.png">
+          <Pack>true</Pack>
+          <PackagePath>\</PackagePath>
+          <Link>icon.png</Link>
+        </None>
     </ItemGroup>
 
     <ItemGroup>

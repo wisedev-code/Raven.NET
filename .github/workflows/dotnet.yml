@@ -59,7 +59,7 @@ jobs:
 
   publishAnalyticsRC:
       runs-on: ubuntu-latest
-      needs: test
+      needs: publishRC
       if: github.event.pull_request.base.ref == 'main'
       steps:
       - uses: actions/checkout@v3
