@@ -47,7 +47,7 @@ namespace Raven.NET.Analytics
             return Results.Ok(ravens);
         }
         
-        private IResult GetSubjects(HttpContext context)
+        private IResult GetSubjects()
         {
             var ravenStorage = RavenStorage.GetInstance();
             var analyticsBuilder = new AnalyticBuilder(ravenStorage);
