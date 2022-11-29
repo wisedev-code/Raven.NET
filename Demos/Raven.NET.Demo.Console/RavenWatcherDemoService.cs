@@ -75,11 +75,7 @@ public class RavenWatcherDemoService
         testPhone2.TryNotify();
         testPhone3.TryNotify();
 
-        while (true)
-        {
-            Thread.Sleep(50);
-            //System.Console.ReadLine();
-        }
+        System.Console.ReadLine();
     }
 
     private bool PhoneUpdated(RavenSubject ravenSubject)

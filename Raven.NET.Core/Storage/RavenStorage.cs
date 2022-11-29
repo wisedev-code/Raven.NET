@@ -29,7 +29,6 @@ namespace Raven.NET.Core.Storage
         public List<RavenSubject> GetAllSubjects()
         {
             var watchers = RavenWatcherStorage.Values.ToList();
-            watchers.AddRange(RavenTypeWatcherStorage.Values);
 
             List<RavenSubject> subjects = new List<RavenSubject>();
             foreach (var watcher in watchers)
@@ -38,8 +37,8 @@ namespace Raven.NET.Core.Storage
                 {
                     foreach (var subject in typeWatcher._watchedSubjects)
                     {
-                        var type = GetType();
-                        subject.Key = type.GetProperty(((IRavenTypeWatcher)typeWatcher).KeyName)?.GetValue(this).ToString();
+                        var type = subject.GetType();
+                        subject.Key = type.GetProperty(((IRavenTypeWatcher)typeWatcher).KeyName)?.GetValue(subject).ToString();
                         subjects.Add(subject);
                     }
                     
@@ -94,7 +93,6 @@ namespace Raven.NET.Core.Storage
         public List<IRaven> GetAllRavens()
         {
             var watchers = RavenWatcherStorage.Values.ToList();
-            watchers.AddRange(RavenTypeWatcherStorage.Values);
 
             return watchers;
         }
