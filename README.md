@@ -12,6 +12,8 @@ or via nuget package manager console:
 
 > Install-Package Raven.NET.Core 
 
+(feel free to checkout Analytics package as well)
+
 To check newest updates and additional information please check direct link:
 https://www.nuget.org/packages/Raven.NET.Core
 ## Getting started
