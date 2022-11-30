@@ -17,6 +17,8 @@ namespace Raven.NET.Core.Subjects
 
         internal List<IRaven> Observers = new();
         internal Guid UniqueId { get; set; }
+        internal string Key { get; set; }
+        internal DateTime UpdatedAt { get; set; }
 
         protected RavenSubject()
         {
@@ -67,6 +69,7 @@ namespace Raven.NET.Core.Subjects
                 if (_ravenStorage.SubjectTryUpdate(UniqueId, valueToCache))
                 {
                     Observers.ForEach(raven => raven.Update(this));
+                    UpdatedAt = DateTime.Now;
                 }
             }
         }
@@ -93,6 +96,7 @@ namespace Raven.NET.Core.Subjects
                 _ravenStorage.RavenTypeWatcherGet(type).UpdateNewestSubject(key, this);
                 _ravenStorage.SubjectTypeValueTryUpdate(type, key, valueToStore);
                 Observers.ForEach(raven => raven.Update(this));
+                UpdatedAt = DateTime.Now;
             }
         }
     }

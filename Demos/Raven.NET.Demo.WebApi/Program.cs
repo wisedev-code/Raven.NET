@@ -1,3 +1,4 @@
+using Raven.NET.Analytics;
 using Raven.NET.Core.Configuration;
 using Raven.NET.Demo.WebApi.Repositories;
 using Raven.NET.Demo.WebApi.Repositories.Interfaces;
@@ -16,6 +17,7 @@ builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
 builder.Services.AddSingleton<ICustomerUpdateService, CustomerUpdateService>();
 builder.Services.AddSingleton<IOrderUpdateService, OrderUpdateService>();
 builder.Services.ConfigureRaven(builder.Configuration);
+builder.Services.AddRavenAnalytics();
 
 var app = builder.Build();
 
@@ -32,7 +34,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
-
+await app.RunAsync();
 
 //PS: This api is not an example of properly done SOLID Web Api, its simple showcase to see how Raven.NET components can be implemented

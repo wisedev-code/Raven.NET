@@ -24,6 +24,7 @@ namespace Raven.NET.Core.Configuration
             services.AddTransient<IRavenTypeWatcher, RavenTypeWatcher>();
 
             services.AddSingleton<IRavenStorage, RavenStorage>();
+            services.AddSingleton(services);
         }
     }
 }

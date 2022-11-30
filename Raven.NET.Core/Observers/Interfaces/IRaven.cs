@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.CompilerServices;
 using Raven.NET.Core.Subjects;
 
 namespace Raven.NET.Core.Observers.Interfaces
@@ -12,5 +14,9 @@ namespace Raven.NET.Core.Observers.Interfaces
         /// </summary>
         /// <param name="subject"></param>
         internal void Update(RavenSubject subject);
+        internal string Name { get; }
+        internal int SubjectCount { get; }
+        internal DateTime CreatedAt { get; }
+        internal DateTime UpdatedAt { get; }
     }
 }

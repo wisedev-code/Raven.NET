@@ -29,6 +29,8 @@ namespace Raven.NET.Core.Observers
         
         internal RavenSettings _ravenSettings = new();
         internal List<RavenSubject> _watchedSubjects = new();
+        private DateTime _createdAt;
+        private DateTime _updatedAt;
 
         public RavenTypeWatcher(
             IRavenProvider ravenProvider,
@@ -50,6 +52,7 @@ namespace Raven.NET.Core.Observers
             {
                 _updateAction(subject);
                 _logger.LogDebug($"Raven {RavenName} updated with subject {subject.UniqueId}.");
+                _updatedAt = DateTime.Now;
             }
             catch (Exception ex)
             {
@@ -61,6 +64,14 @@ namespace Raven.NET.Core.Observers
                 _logger.LogError($"Raven: {RavenName} encounter error on running update callback ({ex.Message})");
             }
         }
+
+        string IRaven.Name => RavenName;
+
+        int IRaven.SubjectCount => _watchedSubjects.Count;
+
+        DateTime IRaven.CreatedAt => _createdAt;
+
+        DateTime IRaven.UpdatedAt => _updatedAt;
 
         /// <inheritdoc/>
         public IRavenTypeWatcher Create<T>(string name, string keyName, Func<RavenSubject, bool> callback, Action<RavenSettings> options = null) 
@@ -105,6 +116,7 @@ namespace Raven.NET.Core.Observers
             _logger.LogInformation($"Created new raven. {RavenName}");
             _logger.LogDebug($"Raven log level: {_ravenSettings.LogLevel}, autoDestroy: {_ravenSettings.AutoDestroy}.");
 
+            _createdAt = DateTime.Now;
             return this;
         }
 

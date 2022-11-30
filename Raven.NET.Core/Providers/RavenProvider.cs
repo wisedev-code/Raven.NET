@@ -22,7 +22,7 @@ namespace Raven.NET.Core.Providers
         }
 
         /// <inheritdoc/>
-        void IRavenProvider.AddRaven(string ravenName, IRaven raven, Type subjectType = default)
+        void IRavenProvider.AddRaven(string ravenName, IRaven raven, Type subjectType)
         {
             if (raven is IRavenTypeWatcher)
             {
