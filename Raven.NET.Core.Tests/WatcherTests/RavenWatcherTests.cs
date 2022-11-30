@@ -52,8 +52,8 @@ public class RavenWatcherTests
         //Assert
         //_ravenStorage.RavenWatcherExists(watcherName).ShouldBeTrue();
         var settings = (sut as RavenWatcher)?._ravenSettings;
-        settings.LogLevel.ShouldBe(LogLevel.Warning);
-        settings.AutoDestroy.ShouldBe(false);
+        settings?.LogLevel.ShouldBe(LogLevel.Warning);
+        settings?.AutoDestroy.ShouldBe(false);
         _ravenProvider.Verify(x => x.AddRaven(watcherName, sut, null));
         _ravenSettingsProvider.Verify(x => x.GetRaven(watcherName));
     }
@@ -79,8 +79,8 @@ public class RavenWatcherTests
     
         //Assert
         var settings = (sut as RavenWatcher)?._ravenSettings;
-        settings.LogLevel.ShouldBe(LogLevel.Trace);
-        settings.AutoDestroy.ShouldBe(true);
+        settings?.LogLevel.ShouldBe(LogLevel.Trace);
+        settings?.AutoDestroy.ShouldBe(true);
         _ravenSettingsProvider.Verify(x => x.GetRaven(watcherName));
         _ravenProvider.Verify(x => x.AddRaven(watcherName, sut, null));
     }
@@ -110,8 +110,8 @@ public class RavenWatcherTests
     
         //Assert
         var settings = (sut as RavenWatcher)?._ravenSettings;
-        settings.LogLevel.ShouldBe(LogLevel.Critical);
-        settings.AutoDestroy.ShouldBe(false);
+        settings?.LogLevel.ShouldBe(LogLevel.Critical);
+        settings?.AutoDestroy.ShouldBe(false);
         _ravenSettingsProvider.Verify(x => x.GetRaven(watcherName));
         _ravenProvider.Verify(x => x.AddRaven(watcherName, sut, null));
     }
@@ -129,7 +129,7 @@ public class RavenWatcherTests
 
         //Assert
         var watcher = sut as RavenWatcher;
-        watcher._watchedSubjects.ShouldContain(mockedSubject);
+        watcher?._watchedSubjects.ShouldContain(mockedSubject);
         mockedSubject.Observers.ShouldContain(watcher);
     }
 
@@ -167,7 +167,7 @@ public class RavenWatcherTests
 
         //Assert
         var watcher = sut as RavenWatcher;
-        watcher._watchedSubjects.ShouldNotContain(mockedSubject);
+        watcher?._watchedSubjects.ShouldNotContain(mockedSubject);
         mockedSubject.Observers.ShouldNotContain(watcher);
         _ravenProvider.Verify(x => x.UpdateSubjects(watcherName, It.IsAny<IEnumerable<RavenSubject>>(), null));
     }
@@ -212,8 +212,8 @@ public class RavenWatcherTests
 
         //Assert
         var watcher = sut as RavenWatcher;
-        watcher._watchedSubjects.ShouldNotContain(mockedSubject1);
-        watcher._watchedSubjects.ShouldNotContain(mockedSubject2);
+        watcher?._watchedSubjects.ShouldNotContain(mockedSubject1);
+        watcher?._watchedSubjects.ShouldNotContain(mockedSubject2);
         mockedSubject1.Observers.ShouldNotContain(watcher);
         mockedSubject2.Observers.ShouldNotContain(watcher);
         _ravenProvider.Verify(x => x.UpdateSubjects(watcherName, It.IsAny<IEnumerable<RavenSubject>>(), null));
