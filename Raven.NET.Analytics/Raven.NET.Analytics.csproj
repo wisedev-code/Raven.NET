@@ -5,7 +5,18 @@
         <Nullable>enable</Nullable>
         <OutputType>Library</OutputType>
         <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    </PropertyGroup>
 
+     <PropertyGroup>
+        <PackageId>Raven.NET.Analytics</PackageId>
+        <Authors>Wisedev, Piotr Świerad, Maciej Cebula</Authors>
+        <Company>Wisedev</Company>
+        <Description>Observer pattern in .NET with a few additions and animal reference - Analytics package.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/wisedev-code/Raven.NET</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/wisedev-code/Raven.NET</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -136,6 +147,12 @@
         
         <None Update="HTML\css\bootstrap.min.css">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        
+        <None Include="..\icon.png">
+          <Pack>true</Pack>
+          <PackagePath>\</PackagePath>
+          <Link>icon.png</Link>
         </None>
     </ItemGroup>
 

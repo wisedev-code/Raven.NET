@@ -46,6 +46,7 @@ As mentioned before Raven.NET implement subscriber and publisher structures, wit
 - RavenTypeWatcher inferface: [Link](RavenTypeWatcher.md)
 - RavenProvider interface: [Link](RavenProvider.md)
 - Configuration: [Link](Configuration.md)
+- Analytics package: [Link](Analytics.md)
 - Examples: [Link](/Demos/)
 
 
