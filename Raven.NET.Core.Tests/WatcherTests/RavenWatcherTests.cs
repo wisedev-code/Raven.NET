@@ -157,7 +157,7 @@ public class RavenWatcherTests
         var mockedSubject = new TestSubjectEntity();
         sut.Create(watcherName, subject => true);
         sut.Watch(mockedSubject);
-        _ravenProvider.Setup(x => x.GetRaven(watcherName, null)).Returns(sut as RavenWatcher);
+        _ravenProvider.Setup(x => x.GetRaven(watcherName, null)).Returns((sut as RavenWatcher)!);
         _ravenProvider.Setup(x => x.UpdateSubjects(It.IsAny<string>(), It.IsAny<IEnumerable<RavenSubject>>(), null))
             .Callback(
                 () => { mockedSubject.Observers.Clear(); });
@@ -198,7 +198,7 @@ public class RavenWatcherTests
         var mockedSubject2 = new TestSubjectEntity();
         sut.Create(watcherName, subject => true);
         sut.Watch(mockedSubject1).Watch(mockedSubject2);
-        _ravenProvider.Setup(x => x.GetRaven(watcherName, null)).Returns(sut as RavenWatcher);
+        _ravenProvider.Setup(x => x.GetRaven(watcherName, null)).Returns((sut as RavenWatcher)!);
         _ravenProvider.Setup(x => x.UpdateSubjects(It.IsAny<string>(), It.IsAny<IEnumerable<RavenSubject>>(), null))
             .Callback(
                 () =>
