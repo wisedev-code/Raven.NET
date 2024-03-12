@@ -78,7 +78,8 @@ namespace Raven.NET.Core.Subjects
         {
             var type = GetType();
 
-            var key = type.GetProperty(_ravenStorage.RavenTypeWatcherGet(type).KeyName).GetValue(this).ToString();
+            var typeWatcher = _ravenStorage.RavenTypeWatcherGet(type).KeyName ?? string.Empty;
+            var key = type.GetProperty(typeWatcher)?.GetValue(this).ToString();
             var valueToStore = this.CreateCacheValue();
 
             if (!_ravenStorage.SubjectTypeValueExists(type, key))
